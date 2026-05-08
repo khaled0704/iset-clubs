@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ClubRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ClubRepository::class)]
@@ -33,6 +35,17 @@ class Club
 
     #[ORM\Column]
     private ?\DateTime $createdAt = null;
+
+    /**
+     * @var Collection<int, ClubMember>
+     */
+    #[ORM\OneToMany(targetEntity: ClubMember::class, mappedBy: 'club')]
+    private Collection $clubMembers;
+
+    public function __construct()
+    {
+        $this->clubMembers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -119,6 +132,36 @@ class Club
     public function setCreatedAt(\DateTime $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ClubMember>
+     */
+    public function getClubMembers(): Collection
+    {
+        return $this->clubMembers;
+    }
+
+    public function addClubMember(ClubMember $clubMember): static
+    {
+        if (!$this->clubMembers->contains($clubMember)) {
+            $this->clubMembers->add($clubMember);
+            $clubMember->setClub($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClubMember(ClubMember $clubMember): static
+    {
+        if ($this->clubMembers->removeElement($clubMember)) {
+            // set the owning side to null (unless already changed)
+            if ($clubMember->getClub() === $this) {
+                $clubMember->setClub(null);
+            }
+        }
 
         return $this;
     }

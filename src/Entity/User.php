@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -54,6 +56,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $dtype = null;
+
+    /**
+     * @var Collection<int, ClubMember>
+     */
+    #[ORM\OneToMany(targetEntity: ClubMember::class, mappedBy: 'user')]
+    private Collection $clubMembers;
+
+    public function __construct()
+    {
+        $this->clubMembers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -228,6 +241,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDtype(?string $dtype): static
     {
         $this->dtype = $dtype;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ClubMember>
+     */
+    public function getClubMembers(): Collection
+    {
+        return $this->clubMembers;
+    }
+
+    public function addClubMember(ClubMember $clubMember): static
+    {
+        if (!$this->clubMembers->contains($clubMember)) {
+            $this->clubMembers->add($clubMember);
+            $clubMember->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClubMember(ClubMember $clubMember): static
+    {
+        if ($this->clubMembers->removeElement($clubMember)) {
+            // set the owning side to null (unless already changed)
+            if ($clubMember->getUser() === $this) {
+                $clubMember->setUser(null);
+            }
+        }
 
         return $this;
     }
