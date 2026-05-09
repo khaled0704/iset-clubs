@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+<div class="container mt-5" style="max-width: 600px">
+    <h1 class="mb-4">Mon Profil</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    <div class="text-center mb-4">
+        {% if user.profilepicture %}
+            <img src="/uploads/profiles/{{ user.profilepicture }}" 
+                 class="rounded-circle" width="120" height="120" style="object-fit:cover">
+        {% else %}
+            <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center" 
+                 style="width:120px;height:120px">
+                <span class="text-white fs-1">{{ user.firstname|first }}</span>
+            </div>
+        {% endif %}
+        <h4 class="mt-2">{{ user.firstname }} {{ user.lastname }}</h4>
+        <p class="text-muted">{{ user.email }}</p>
+    </div>
+
+    {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+        <div class="mb-3">
+            {{ form_label(form.firstname) }}
+            {{ form_widget(form.firstname) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.lastname) }}
+            {{ form_widget(form.lastname) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.phonenumber) }}
+            {{ form_widget(form.phonenumber) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.profilePictureFile) }}
+            {{ form_widget(form.profilePictureFile) }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Enregistrer</button>
+    {{ form_end(form) }}
+
+    <div class="text-center mt-3">
+        <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">Retour</a>
+    </div>
+</div>
+{% endblock %}
