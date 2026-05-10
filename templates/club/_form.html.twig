@@ -1,0 +1,10 @@
+{{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+    {{ form_widget(form) }}
+    {% if club.logo %}
+        <div style="margin: 10px 0;">
+            <p><strong>Current logo:</strong></p>
+            <img src="{{ asset('uploads/clubs/' ~ club.logo) }}" alt="Club logo" style="max-height: 120px; border-radius: 8px; border: 1px solid #ddd;">
+        </div>
+    {% endif %}
+    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}
