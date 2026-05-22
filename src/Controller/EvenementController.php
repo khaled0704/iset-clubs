@@ -34,7 +34,16 @@ class EvenementController extends AbstractController
         $form = $this->createForm(EvenementType::class, $evenement);
         $form->handleRequest($request);
 
+
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->getUser();
+            $clubMember = $em->getRepository(\App\Entity\ClubMember::class)->findOneBy(['user' => $user]);
+
+            if (!$clubMember) {
+                $this->addFlash('error', 'Vous devez être membre d\'un club pour créer un événement.');
+                return $this->redirectToRoute('app_evenement_index');
+            }
+
             $imageFile = $form->get('imageFile')->getData();
             if ($imageFile) {
                 $newFilename = uniqid() . '.' . $imageFile->guessExtension();
@@ -47,7 +56,7 @@ class EvenementController extends AbstractController
 
             $evenement->setStatus('pending');
             $evenement->setCreatedAt(new \DateTime());
-            $evenement->setClub(null);
+            $evenement->setClub($clubMember->getClub());
             $em->persist($evenement);
             $em->flush();
 
@@ -67,18 +76,18 @@ class EvenementController extends AbstractController
         ParticipationRepository $participationRepo
     ): Response {
         $user = $this->getUser();
-        
-        // Check if already participating
+
+        // checki keno deja participant
         $alreadyParticipating = false;
         if ($user) {
             $existing = $participationRepo->findOneBy([
                 'user' => $user,
-                'evenement' => $evenement
+                'Evenement' => $evenement
             ]);
             $alreadyParticipating = $existing !== null;
         }
 
-        // Feedback form
+        // form ta3 el feedback
         $feedback = new Feedback();
         $feedbackForm = $this->createForm(FeedbackType::class, $feedback);
         $feedbackForm->handleRequest($request);
@@ -110,7 +119,7 @@ class EvenementController extends AbstractController
 
         $existing = $participationRepo->findOneBy([
             'user' => $user,
-            'evenement' => $evenement
+            'Evenement' => $evenement
         ]);
 
         if (!$existing) {
@@ -127,5 +136,5 @@ class EvenementController extends AbstractController
 
         return $this->redirectToRoute('app_evenement_show', ['id' => $evenement->getId()]);
     }
-    
+
 }

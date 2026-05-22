@@ -1,30 +1,85 @@
 {% extends 'base.html.twig' %}
-{% block title %}Gestion Clubs{% endblock %}
+{% block title %}Admin - Clubs{% endblock %}
 {% block body %}
 <div class="container mt-4">
-    <h1 class="mb-4">Gestion des Clubs</h1>
-    <table class="table table-striped">
-        <thead class="table-dark">
+    <h1 class="mb-4">🏛 Gestion des Clubs</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {# Pending clubs #}
+    <h4 class="text-warning">⏳ En attente de validation</h4>
+    <table class="table table-bordered mb-5">
+        <thead class="table-warning">
             <tr>
                 <th>Nom</th>
                 <th>Domaine</th>
-                <th>Statut</th>
+                <th>Créé le</th>
+                <th>Président</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            {% for club in clubs %}
-            <tr>
-                <td>{{ club.name }}</td>
-                <td>{{ club.domain }}</td>
-                <td>
-                    <span class="badge bg-{{ club.status == 'active' ? 'success' : 'warning' }}">
-                        {{ club.status }}
-                    </span>
-                </td>
-            </tr>
-            {% endfor %}
+        {% set hasPending = false %}
+        {% for club in clubs %}
+            {% if club.status == 'pending' %}
+                {% set hasPending = true %}
+                <tr>
+                    <td>{{ club.name }}</td>
+                    <td>{{ club.domain }}</td>
+                    <td>{{ club.createdAt|date('d/m/Y') }}</td>
+                    <td>
+                        {% for member in club.clubMembers %}
+                            {% if member.role == 'President' %}
+                                {{ member.user.firstname }} {{ member.user.lastname }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <a href="{{ path('app_admin_validate_club', {id: club.id}) }}" 
+                           class="btn btn-success btn-sm">✅ Approuver</a>
+                        <a href="{{ path('app_admin_reject_club', {id: club.id}) }}" 
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Supprimer ce club ?')">❌ Refuser</a>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        {% if not hasPending %}
+            <tr><td colspan="5" class="text-center text-muted">Aucun club en attente</td></tr>
+        {% endif %}
         </tbody>
     </table>
-    <a href="{{ path('app_admin') }}" class="btn btn-secondary">Retour</a>
+
+    {# Validated clubs #}
+    <h4 class="text-success">✅ Clubs validés</h4>
+    <table class="table table-bordered">
+        <thead class="table-success">
+            <tr>
+                <th>Nom</th>
+                <th>Domaine</th>
+                <th>Créé le</th>
+                <th>Membres</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set hasValidated = false %}
+        {% for club in clubs %}
+            {% if club.status == 'validated' %}
+                {% set hasValidated = true %}
+                <tr>
+                    <td>{{ club.name }}</td>
+                    <td>{{ club.domain }}</td>
+                    <td>{{ club.createdAt|date('d/m/Y') }}</td>
+                    <td>{{ club.clubMembers|length }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        {% if not hasValidated %}
+            <tr><td colspan="4" class="text-center text-muted">Aucun club validé</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

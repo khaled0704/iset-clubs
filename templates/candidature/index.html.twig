@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mes Candidatures{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">📋 Mes Candidatures</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {% if candidatures is empty %}
+        <div class="alert alert-info">Vous n'avez aucune candidature pour le moment.</div>
+    {% else %}
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Référence</th>
+                    <th>Recrutement</th>
+                    <th>Club</th>
+                    <th>Statut</th>
+                    <th>Date</th>
+                    <th>CV</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for candidature in candidatures %}
+                <tr>
+                    <td><small>{{ candidature.no }}</small></td>
+                    <td>{{ candidature.recrutement.title }}</td>
+                    <td>{{ candidature.recrutement.club.name }}</td>
+                    <td>
+                        <span class="badge bg-{{ candidature.status == 'accepted' ? 'success' : (candidature.status == 'rejected' ? 'danger' : 'warning') }}">
+                            {{ candidature.status }}
+                        </span>
+                    </td>
+                    <td>{{ candidature.submittedAt|date('d/m/Y') }}</td>
+                    <td>
+                        {% if candidature.cvFilename %}
+                            <a href="/uploads/cvs/{{ candidature.cvFilename }}" target="_blank">
+                                📄 Voir CV
+                            </a>
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

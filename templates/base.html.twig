@@ -19,14 +19,28 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_evenement_index') }}">📅 Événements</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_recrutement_index') }}">🏛️ Recrutement</a>
+                </li>
+                
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                 <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_club_index') }}">🏛️ Clubs</a>
+                </li>
+                 <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_reclamation_index') }}">📋 Réclamations</a>
+                </li>
+                {% endif %}
+                {% if is_granted('IS_AUTHENTICATED_FULLY') and (is_granted('ROLE_PRESIDENT') or is_granted('ROLE_RESPONSABLE')) %}
+
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_evenement_create') }}">➕ Créer événement</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_club_index') }}">🏛️ Clubs</a>
+                    <a class="nav-link" href="{{ path('app_recrutement_create') }}">➕ Créer recrutement</a>
                 </li>
                 {% endif %}
+                
                 {% if is_granted('ROLE_ADMIN') %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_admin') }}">🛠️ Admin</a>

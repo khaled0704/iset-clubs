@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+{% block title %}Admin - Recrutements{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">🏛 Gestion des Recrutements</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {# Pending #}
+    <h4 class="text-warning">⏳ En attente de validation</h4>
+    <table class="table table-bordered mb-5">
+        <thead class="table-warning">
+            <tr>
+                <th>Titre</th>
+                <th>Club</th>
+                <th>Créé le</th>
+                <th>Deadline</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set hasPending = false %}
+        {% for recrutement in recrutements %}
+            {% if recrutement.status == 'pending' %}
+                {% set hasPending = true %}
+                <tr>
+                    <td>{{ recrutement.title }}</td>
+                    <td>{{ recrutement.club.name }}</td>
+                    <td>{{ recrutement.createdAt|date('d/m/Y') }}</td>
+                    <td>{{ recrutement.deadline ? recrutement.deadline|date('d/m/Y') : '-' }}</td>
+                    <td>
+                        <a href="{{ path('app_admin_validate_recrutement', {id: recrutement.id}) }}" 
+                           class="btn btn-success btn-sm">✅ Valider</a>
+                        <a href="{{ path('app_admin_reject_recrutement', {id: recrutement.id}) }}" 
+                           class="btn btn-danger btn-sm">❌ Refuser</a>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        {% if not hasPending %}
+            <tr><td colspan="5" class="text-center text-muted">Aucun recrutement en attente</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    {# Validated #}
+    <h4 class="text-success">✅ Recrutements validés</h4>
+    <table class="table table-bordered">
+        <thead class="table-success">
+            <tr>
+                <th>Titre</th>
+                <th>Club</th>
+                <th>Créé le</th>
+                <th>Deadline</th>
+                <th>Candidatures</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set hasValidated = false %}
+        {% for recrutement in recrutements %}
+            {% if recrutement.status == 'validated' %}
+                {% set hasValidated = true %}
+                <tr>
+                    <td>{{ recrutement.title }}</td>
+                    <td>{{ recrutement.club.name }}</td>
+                    <td>{{ recrutement.createdAt|date('d/m/Y') }}</td>
+                    <td>{{ recrutement.deadline ? recrutement.deadline|date('d/m/Y') : '-' }}</td>
+                    <td>{{ recrutement.candidatures|length }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        {% if not hasValidated %}
+            <tr><td colspan="5" class="text-center text-muted">Aucun recrutement validé</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

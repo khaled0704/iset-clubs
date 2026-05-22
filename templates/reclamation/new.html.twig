@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nouvelle Réclamation{% endblock %}
+{% block body %}
+<div class="container mt-4" style="max-width: 600px">
+    <h1 class="mb-4">📋 Nouvelle Réclamation</h1>
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+
+    {{ form_start(form) }}
+        <div class="mb-3">{{ form_row(form.subject) }}</div>
+        <div class="mb-3">{{ form_row(form.message) }}</div>
+        <button type="submit" class="btn btn-primary">Envoyer</button>
+        <a href="{{ path('app_reclamation_index') }}" class="btn btn-secondary">Annuler</a>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

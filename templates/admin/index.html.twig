@@ -4,8 +4,9 @@
 <div class="container mt-4">
     <h1 class="mb-4">Admin Dashboard</h1>
 
+    {# Stats cards #}
     <div class="row mb-4">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="card text-white bg-primary">
                 <div class="card-body text-center">
                     <h2>{{ totalUsers }}</h2>
@@ -13,7 +14,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="card text-white bg-success">
                 <div class="card-body text-center">
                     <h2>{{ totalClubs }}</h2>
@@ -21,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="card text-white bg-warning">
                 <div class="card-body text-center">
                     <h2>{{ totalEvents }}</h2>
@@ -29,7 +30,15 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
+            <div class="card text-white bg-info">
+                <div class="card-body text-center">
+                    <h2>{{ totalRecrutements }}</h2>
+                    <p>Recrutements</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
             <div class="card text-white bg-danger">
                 <div class="card-body text-center">
                     <h2>{{ totalReclamations }}</h2>
@@ -39,10 +48,11 @@
         </div>
     </div>
 
+    {# Recent tables #}
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card mb-4">
-                <div class="card-header">Derniers utilisateurs</div>
+                <div class="card-header">👥 Derniers utilisateurs</div>
                 <ul class="list-group list-group-flush">
                     {% for user in recentUsers %}
                     <li class="list-group-item d-flex justify-content-between">
@@ -56,9 +66,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card mb-4">
-                <div class="card-header">Derniers événements</div>
+                <div class="card-header">📅 Derniers événements</div>
                 <ul class="list-group list-group-flush">
                     {% for event in recentEvents %}
                     <li class="list-group-item d-flex justify-content-between">
@@ -74,13 +84,34 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">🏛 Derniers recrutements</div>
+                <ul class="list-group list-group-flush">
+                    {% for recrutement in recentRecrutements %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ recrutement.title }}</span>
+                        <span class="badge bg-{{ recrutement.status == 'validated' ? 'success' : (recrutement.status == 'rejected' ? 'danger' : 'warning') }}">
+                            {{ recrutement.status }}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="card-footer">
+                    <a href="{{ path('app_admin_recrutements') }}" class="btn btn-sm btn-primary">Voir tout</a>
+                </div>
+            </div>
+        </div>
     </div>
 
+    {# Quick action buttons #}
     <div class="mt-2">
         <a href="{{ path('app_admin_users') }}" class="btn btn-outline-primary me-2">👥 Gérer utilisateurs</a>
         <a href="{{ path('app_admin_events') }}" class="btn btn-outline-warning me-2">📅 Gérer événements</a>
-        <a href="{{ path('app_admin_clubs') }}" class="btn btn-outline-success">🏛️ Gérer clubs</a>
+        <a href="{{ path('app_admin_clubs') }}" class="btn btn-outline-success me-2">🏛️ Gérer clubs</a>
         <a href="{{ path('app_admin_club_members') }}" class="btn btn-outline-info me-2">👥 Demandes adhésion</a>
+        <a href="{{ path('app_admin_recrutements') }}" class="btn btn-outline-secondary">🏛 Gérer recrutements</a>
+        <a href="{{ path('app_admin_reclamations') }}" class="btn btn-outline-danger me-2">📋 Gérer Réclamations</a>
     </div>
 </div>
 {% endblock %}

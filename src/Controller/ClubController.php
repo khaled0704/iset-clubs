@@ -20,37 +20,50 @@ final class ClubController extends AbstractController
     public function index(ClubRepository $clubRepository): Response
     {
         return $this->render('club/index.html.twig', [
-            'clubs' => $clubRepository->findAll(),
+            'clubs' => $clubRepository->findBy(['status' => 'validated']),
         ]);
     }
 
     #[Route('/new', name: 'app_club_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $club = new Club();
         $form = $this->createForm(ClubType::class, $club);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            /** @var \Symfony\Component\HttpFoundation\File\UploadedFile|null $logoFile */
             $logoFile = $form->get('logoFile')->getData();
             if ($logoFile) {
                 $originalFilename = pathinfo($logoFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename . '-' . uniqid() . '.' . $logoFile->guessExtension();
-
                 $logoFile->move(
                     $this->getParameter('kernel.project_dir') . '/public/uploads/clubs',
                     $newFilename
                 );
-
                 $club->setLogo($newFilename);
             }
 
+            // Club starts as pending until admin approves
+            $club->setStatus('pending');
+            $club->setCreatedAt(new \DateTime());
             $entityManager->persist($club);
+
+            // Creator becomes President but also pending until club is approved
+            $member = new \App\Entity\ClubMember();
+            $member->setUser($this->getUser());
+            $member->setClub($club);
+            $member->setRole('President');
+            $member->setStatus('pending');
+            $member->setJoinedAt(new \DateTime());
+            $entityManager->persist($member);
+
             $entityManager->flush();
 
+            $this->addFlash('success', 'Votre club a été soumis et est en attente de validation par un admin.');
             return $this->redirectToRoute('app_club_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -59,8 +72,7 @@ final class ClubController extends AbstractController
             'form' => $form,
         ]);
     }
-
-   #[Route('/{id}', name: 'app_club_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_club_show', methods: ['GET'])]
     public function show(Club $club, ClubMemberRepository $clubMemberRepo): Response
     {
         $isMember = null;

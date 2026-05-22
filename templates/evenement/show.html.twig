@@ -21,6 +21,13 @@
                 {% endif %}
             </p>
             <hr>
+            {% if evenement.image %}
+                        <img src="/uploads/events/{{ evenement.image }}" class="card-img-top" style="height:100px;width:100px;object-fit:cover">
+                    {% else %}
+                        <div class="bg-secondary text-white text-center py-5">
+                            <span class="fs-1">📅</span>
+                        </div>
+                    {% endif %}
             <p>{{ evenement.description }}</p>
         </div>
 

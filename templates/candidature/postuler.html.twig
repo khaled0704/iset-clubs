@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+{% block title %}Postuler - {{ recrutement.title }}{% endblock %}
+{% block body %}
+<div class="container mt-4" style="max-width: 650px">
+    <h1 class="mb-1">📋 Postuler</h1>
+    <p class="text-muted mb-4">{{ recrutement.title }} — {{ recrutement.club.name }}</p>
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+
+    {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+        <div class="mb-3">{{ form_row(form.message) }}</div>
+        <div class="mb-3">{{ form_row(form.cvFile) }}</div>
+        <button type="submit" class="btn btn-success">Envoyer ma candidature</button>
+        <a href="{{ path('app_recrutement_show', {id: recrutement.id}) }}" 
+           class="btn btn-secondary">Annuler</a>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

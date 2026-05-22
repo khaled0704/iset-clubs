@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Club;
 use App\Entity\Evenement;
+use App\Entity\Recrutement;
+use App\Repository\RecrutementRepository;
 use App\Repository\UserRepository;
 use App\Repository\ClubRepository;
 use App\Repository\EvenementRepository;
@@ -25,15 +27,18 @@ class AdminController extends AbstractController
         UserRepository $userRepo,
         ClubRepository $clubRepo,
         EvenementRepository $evenementRepo,
-        ReclamationRepository $reclamationRepo
+        ReclamationRepository $reclamationRepo,
+        RecrutementRepository $recrutementRepo
     ): Response {
         return $this->render('admin/index.html.twig', [
             'totalUsers' => count($userRepo->findAll()),
             'totalClubs' => count($clubRepo->findAll()),
             'totalEvents' => count($evenementRepo->findAll()),
             'totalReclamations' => count($reclamationRepo->findAll()),
+            'totalRecrutements' => count($recrutementRepo->findAll()),
             'recentUsers' => $userRepo->findBy([], ['id' => 'DESC'], 5),
             'recentEvents' => $evenementRepo->findBy([], ['id' => 'DESC'], 5),
+            'recentRecrutements' => $recrutementRepo->findBy([], ['id' => 'DESC'], 5),
         ]);
     }
 
@@ -87,6 +92,36 @@ class AdminController extends AbstractController
             'clubs' => $clubRepo->findAll(),
         ]);
     }
+    #[Route('/clubs/validate/{id}', name: 'app_admin_validate_club')]
+    public function validateClub(Club $club, EntityManagerInterface $em): Response
+    {
+        $club->setStatus('validated');
+
+        // Also approve the President member
+        foreach ($club->getClubMembers() as $member) {
+            if ($member->getRole() === 'President') {
+                $member->setStatus('approved');
+            }
+        }
+
+        $em->flush();
+        $this->addFlash('success', 'Club validé et président approuvé !');
+        return $this->redirectToRoute('app_admin_clubs');
+    }
+
+    #[Route('/clubs/reject/{id}', name: 'app_admin_reject_club')]
+    public function rejectClub(Club $club, EntityManagerInterface $em): Response
+    {
+        // Remove the pending President member too
+        foreach ($club->getClubMembers() as $member) {
+            $em->remove($member);
+        }
+
+        $em->remove($club);
+        $em->flush();
+        $this->addFlash('success', 'Club refusé et supprimé !');
+        return $this->redirectToRoute('app_admin_clubs');
+    }
     #[Route('/club-members', name: 'app_admin_club_members')]
     public function clubMembers(\App\Repository\ClubMemberRepository $clubMemberRepo): Response
     {
@@ -110,5 +145,55 @@ class AdminController extends AbstractController
         $em->flush();
         $this->addFlash('success', 'Demande refusée !');
         return $this->redirectToRoute('app_admin_club_members');
+    }
+    #[Route('/recrutements', name: 'app_admin_recrutements')]
+    public function recrutements(RecrutementRepository $recrutementRepo): Response
+    {
+        return $this->render('admin/recrutements.html.twig', [
+            'recrutements' => $recrutementRepo->findAll(),
+        ]);
+    }
+
+    #[Route('/recrutements/validate/{id}', name: 'app_admin_validate_recrutement')]
+    public function validateRecrutement(Recrutement $recrutement, EntityManagerInterface $em): Response
+    {
+        $recrutement->setStatus('validated');
+        $em->flush();
+        $this->addFlash('success', 'Recrutement validé !');
+        return $this->redirectToRoute('app_admin_recrutements');
+    }
+
+    #[Route('/recrutements/reject/{id}', name: 'app_admin_reject_recrutement')]
+    public function rejectRecrutement(Recrutement $recrutement, EntityManagerInterface $em): Response
+    {
+        $recrutement->setStatus('rejected');
+        $em->flush();
+        $this->addFlash('success', 'Recrutement refusé !');
+        return $this->redirectToRoute('app_admin_recrutements');
+    }
+    #[Route('/reclamations', name: 'app_admin_reclamations')]
+    public function reclamations(ReclamationRepository $reclamationRepo): Response
+    {
+        return $this->render('admin/reclamations.html.twig', [
+            'reclamations' => $reclamationRepo->findAll(),
+        ]);
+    }
+
+    #[Route('/reclamations/resolve/{id}', name: 'app_admin_resolve_reclamation')]
+    public function resolveReclamation(\App\Entity\Reclamation $reclamation, EntityManagerInterface $em): Response
+    {
+        $reclamation->setStatus('resolved');
+        $em->flush();
+        $this->addFlash('success', 'Réclamation résolue !');
+        return $this->redirectToRoute('app_admin_reclamations');
+    }
+
+    #[Route('/reclamations/reject/{id}', name: 'app_admin_reject_reclamation')]
+    public function rejectReclamation(\App\Entity\Reclamation $reclamation, EntityManagerInterface $em): Response
+    {
+        $reclamation->setStatus('rejected');
+        $em->flush();
+        $this->addFlash('success', 'Réclamation refusée !');
+        return $this->redirectToRoute('app_admin_reclamations');
     }
 }

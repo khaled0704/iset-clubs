@@ -1,47 +1,50 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Club index{% endblock %}
-
+{% block title %}Clubs{% endblock %}
 {% block body %}
-    <h1>Club index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>🏛 Clubs</h1>
+        <a href="{{ path('app_club_new') }}" class="btn btn-primary">+ Créer un club</a>
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Domain</th>
-                <th>Logo</th>
-                <th>Wbsite</th>
-                <th>Status</th>
-                <th>CreatedAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for club in clubs %}
-            <tr>
-                <td>{{ club.id }}</td>
-                <td>{{ club.name }}</td>
-                <td>{{ club.description }}</td>
-                <td>{{ club.domain }}</td>
-                <td>{{ club.logo }}</td>
-                <td>{{ club.wbsite }}</td>
-                <td>{{ club.status }}</td>
-                <td>{{ club.createdAt ? club.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_club_show', {'id': club.id}) }}">show</a>
-                    <a href="{{ path('app_club_edit', {'id': club.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="9">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
 
-    <a href="{{ path('app_club_new') }}">Create new</a>
+    {% if clubs is empty %}
+        <div class="alert alert-info">Aucun club disponible pour le moment.</div>
+    {% else %}
+        <div class="row">
+            {% for club in clubs %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    {% if club.logo %}
+                        <img src="/uploads/clubs/{{ club.logo }}" 
+                             class="card-img-top" style="height:180px;object-fit:cover">
+                    {% else %}
+                        <div class="bg-secondary text-white text-center py-5">
+                            <span class="fs-1">🏛</span>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ club.name }}</h5>
+                        <p class="text-muted small">
+                            🗂 {{ club.domain }}<br>
+                            🗓️ {{ club.createdAt|date('d/m/Y') }}<br>
+                            {% if club.wbsite %}
+                                🌐 <a href="{{ club.wbsite }}" target="_blank">{{ club.wbsite }}</a>
+                            {% endif %}
+                        </p>
+                        <p class="card-text">{{ club.description|slice(0, 100) }}...</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ path('app_club_show', {id: club.id}) }}" 
+                           class="btn btn-primary w-100">Voir détails</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

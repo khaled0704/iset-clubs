@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% block title %}Créer un recrutement{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">📋 Créer un recrutement</h1>
+
+    {{ form_start(form) }}
+        <div class="mb-3">{{ form_row(form.title) }}</div>
+        <div class="mb-3">{{ form_row(form.description) }}</div>
+        <div class="mb-3">{{ form_row(form.requirements) }}</div>
+        <div class="mb-3">{{ form_row(form.deadline) }}</div>
+        <button type="submit" class="btn btn-primary">Créer</button>
+        <a href="{{ path('app_recrutement_index') }}" class="btn btn-secondary">Annuler</a>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

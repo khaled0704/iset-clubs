@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+{% block title %}Recrutements{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">🏛 Recrutements</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {% if recrutements is empty %}
+        <div class="alert alert-info">Aucun recrutement disponible pour le moment.</div>
+    {% else %}
+        <div class="row">
+            {% for recrutement in recrutements %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="bg-secondary text-white text-center py-5">
+                        <span class="fs-1">🏛</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ recrutement.title }}</h5>
+                        <p class="text-muted small">
+                            🏢 {{ recrutement.club.name }}<br>
+                            🗓️ {{ recrutement.createdAt|date('d/m/Y') }}<br>
+                            {% if recrutement.deadline %}
+                                ⏳ Deadline: {{ recrutement.deadline|date('d/m/Y') }}
+                            {% endif %}
+                        </p>
+                        <p class="card-text">{{ recrutement.description|slice(0, 100) }}...</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ path('app_recrutement_show', {id: recrutement.id}) }}" 
+                           class="btn btn-primary w-100">Voir détails</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

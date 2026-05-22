@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+{% block title %}Admin - Réclamations{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">📋 Gestion des Réclamations</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Utilisateur</th>
+                <th>Sujet</th>
+                <th>Message</th>
+                <th>Statut</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reclamation in reclamations %}
+            <tr>
+                <td>{{ reclamation.user.firstname }} {{ reclamation.user.lastname }}</td>
+                <td>{{ reclamation.subject }}</td>
+                <td>{{ reclamation.message|slice(0, 80) }}...</td>
+                <td>
+                    <span class="badge bg-{{ reclamation.status == 'resolved' ? 'success' : (reclamation.status == 'rejected' ? 'danger' : 'warning') }}">
+                        {{ reclamation.status }}
+                    </span>
+                </td>
+                <td>{{ reclamation.createdAt|date('d/m/Y') }}</td>
+                <td>
+                    {% if reclamation.status == 'pending' %}
+                        <a href="{{ path('app_admin_resolve_reclamation', {id: reclamation.id}) }}" 
+                           class="btn btn-success btn-sm">✅ Résoudre</a>
+                        <a href="{{ path('app_admin_reject_reclamation', {id: reclamation.id}) }}" 
+                           class="btn btn-danger btn-sm">❌ Rejeter</a>
+                    {% else %}
+                        <span class="text-muted">Traité</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="6" class="text-center text-muted">Aucune réclamation</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
