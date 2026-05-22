@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Candidature;
 use App\Entity\User;
 use App\Entity\Club;
 use App\Entity\Evenement;
 use App\Entity\Recrutement;
+use App\Repository\CandidatureRepository;
 use App\Repository\RecrutementRepository;
 use App\Repository\UserRepository;
 use App\Repository\ClubRepository;
@@ -28,14 +30,17 @@ class AdminController extends AbstractController
         ClubRepository $clubRepo,
         EvenementRepository $evenementRepo,
         ReclamationRepository $reclamationRepo,
-        RecrutementRepository $recrutementRepo
+        RecrutementRepository $recrutementRepo,
+        CandidatureRepository $candidatureRepo
     ): Response {
         return $this->render('admin/index.html.twig', [
-            'totalUsers' => count($userRepo->findAll()),
+            'totalUsers' => count($userRepo->findBy(['isApproved' => true])),
+            'totalPendingUsers' => count($userRepo->findBy(['isApproved' => false])),
             'totalClubs' => count($clubRepo->findAll()),
             'totalEvents' => count($evenementRepo->findAll()),
             'totalReclamations' => count($reclamationRepo->findAll()),
             'totalRecrutements' => count($recrutementRepo->findAll()),
+            'totalCandidatures' => count($candidatureRepo->findAll()),
             'recentUsers' => $userRepo->findBy([], ['id' => 'DESC'], 5),
             'recentEvents' => $evenementRepo->findBy([], ['id' => 'DESC'], 5),
             'recentRecrutements' => $recrutementRepo->findBy([], ['id' => 'DESC'], 5),
@@ -46,15 +51,57 @@ class AdminController extends AbstractController
     public function users(UserRepository $userRepo): Response
     {
         return $this->render('admin/users.html.twig', [
-            'users' => $userRepo->findAll(),
+            'pendingUsers' => $userRepo->findBy(['isApproved' => false]),
+            'approvedUsers' => $userRepo->findBy(['isApproved' => true]),
         ]);
+    }
+
+    #[Route('/users/approve/{id}', name: 'app_admin_approve_user')]
+    public function approveUser(User $user, EntityManagerInterface $em): Response
+    {
+        $user->setIsApproved(true);
+        $em->flush();
+        $this->addFlash('success', 'Utilisateur approuvé ! Il peut maintenant se connecter.');
+        return $this->redirectToRoute('app_admin_users');
+    }
+
+    #[Route('/users/reject/{id}', name: 'app_admin_reject_user')]
+    public function rejectUser(User $user, EntityManagerInterface $em): Response
+    {
+        $em->remove($user);
+        $em->flush();
+        $this->addFlash('success', 'Inscription refusée et compte supprimé.');
+        return $this->redirectToRoute('app_admin_users');
     }
 
     #[Route('/users/delete/{id}', name: 'app_admin_delete_user')]
     public function deleteUser(User $user, EntityManagerInterface $em): Response
     {
+        // Delete related club memberships
+        foreach ($user->getClubMembers() as $member) {
+            $em->remove($member);
+        }
+
+        // Delete related candidatures
+        foreach ($user->getCandidatures() as $candidature) {
+            $em->remove($candidature);
+        }
+
+        // Delete related participations
+        foreach ($user->getParticipations() as $participation) {
+            $em->remove($participation);
+        }
+
+        // Delete related reclamations
+        foreach ($user->getReclamations() as $reclamation) {
+            $em->remove($reclamation);
+        }
+
+        $em->flush(); // flush removals first
+
         $em->remove($user);
         $em->flush();
+
         $this->addFlash('success', 'Utilisateur supprimé !');
         return $this->redirectToRoute('app_admin_users');
     }
@@ -196,4 +243,5 @@ class AdminController extends AbstractController
         $this->addFlash('success', 'Réclamation refusée !');
         return $this->redirectToRoute('app_admin_reclamations');
     }
+
 }

@@ -1,0 +1,133 @@
+{% extends 'base.html.twig' %}
+{% block title %}Gestion des Candidatures{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">📋 Gestion des Candidatures d'inscription</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">{{ message }}</div>
+    {% endfor %}
+
+    {# Pending #}
+    <h4 class="text-warning">⏳ En attente de validation</h4>
+    <table class="table table-bordered mb-5">
+        <thead class="table-warning">
+            <tr>
+                <th>N°</th>
+                <th>Étudiant</th>
+                <th>Recrutement</th>
+                <th>Club</th>
+                <th>Date candidature</th>
+                <th>CV</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set hasPending = false %}
+        {% for candidature in candidatures %}
+            {% if candidature.status == 'pending' %}
+                {% set hasPending = true %}
+                <tr>
+                    <td><small class="text-muted">{{ candidature.no }}</small></td>
+                    <td>{{ candidature.user.firstname }} {{ candidature.user.lastname }}<br>
+                        <small class="text-muted">{{ candidature.user.email }}</small>
+                    </td>
+                    <td>{{ candidature.recrutement ? candidature.recrutement.title : '-' }}</td>
+                    <td>{{ candidature.recrutement ? candidature.recrutement.club.name : '-' }}</td>
+                    <td>{{ candidature.submittedAt|date('d/m/Y H:i') }}</td>
+                    <td>
+                        {% if candidature.cvFilename %}
+                            <a href="{{ asset('uploads/cvs/' ~ candidature.cvFilename) }}" target="_blank" class="btn btn-sm btn-outline-secondary">📄 Voir CV</a>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ path('app_admin_approve_candidature', {id: candidature.id}) }}"
+                           class="btn btn-success btn-sm">✅ Approuver</a>
+                        <a href="{{ path('app_admin_reject_candidature', {id: candidature.id}) }}"
+                           class="btn btn-danger btn-sm">❌ Refuser</a>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        {% if not hasPending %}
+            <tr><td colspan="7" class="text-center text-muted">Aucune candidature en attente</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    {# Approved #}
+    <h4 class="text-success">✅ Candidatures approuvées</h4>
+    <table class="table table-bordered mb-5">
+        <thead class="table-success">
+            <tr>
+                <th>N°</th>
+                <th>Étudiant</th>
+                <th>Recrutement</th>
+                <th>Club</th>
+                <th>Date candidature</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set hasApproved = false %}
+        {% for candidature in candidatures %}
+            {% if candidature.status == 'approved' %}
+                {% set hasApproved = true %}
+                <tr>
+                    <td><small class="text-muted">{{ candidature.no }}</small></td>
+                    <td>{{ candidature.user.firstname }} {{ candidature.user.lastname }}</td>
+                    <td>{{ candidature.recrutement ? candidature.recrutement.title : '-' }}</td>
+                    <td>{{ candidature.recrutement ? candidature.recrutement.club.name : '-' }}</td>
+                    <td>{{ candidature.submittedAt|date('d/m/Y H:i') }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        {% if not hasApproved %}
+            <tr><td colspan="5" class="text-center text-muted">Aucune candidature approuvée</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    {# Rejected #}
+    <h4 class="text-danger">❌ Candidatures refusées</h4>
+    <table class="table table-bordered">
+        <thead class="table-danger">
+            <tr>
+                <th>N°</th>
+                <th>Étudiant</th>
+                <th>Recrutement</th>
+                <th>Club</th>
+                <th>Date candidature</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set hasRejected = false %}
+        {% for candidature in candidatures %}
+            {% if candidature.status == 'rejected' %}
+                {% set hasRejected = true %}
+                <tr>
+                    <td><small class="text-muted">{{ candidature.no }}</small></td>
+                    <td>{{ candidature.user.firstname }} {{ candidature.user.lastname }}</td>
+                    <td>{{ candidature.recrutement ? candidature.recrutement.title : '-' }}</td>
+                    <td>{{ candidature.recrutement ? candidature.recrutement.club.name : '-' }}</td>
+                    <td>{{ candidature.submittedAt|date('d/m/Y H:i') }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        {% if not hasRejected %}
+            <tr><td colspan="5" class="text-center text-muted">Aucune candidature refusée</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_admin') }}" class="btn btn-secondary">← Retour</a>
+    {% else %}
+        <a href="{{ path('app_home') }}" class="btn btn-secondary">← Retour</a>
+    {% endif %}
+</div>
+{% endblock %}

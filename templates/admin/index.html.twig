@@ -46,6 +46,14 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-2">
+            <div class="card text-white" style="background-color: #6f42c1;">
+                <div class="card-body text-center">
+                    <h2>{{ totalCandidatures }}</h2>
+                    <p>Candidatures</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     {# Recent tables #}
@@ -106,11 +114,17 @@
 
     {# Quick action buttons #}
     <div class="mt-2">
-        <a href="{{ path('app_admin_users') }}" class="btn btn-outline-primary me-2">👥 Gérer utilisateurs</a>
+        <a href="{{ path('app_admin_users') }}" class="btn btn-outline-primary me-2">
+            👥 Gérer utilisateurs
+            {% if totalPendingUsers > 0 %}
+                <span class="badge bg-danger">{{ totalPendingUsers }}</span>
+            {% endif %}
+        </a>
         <a href="{{ path('app_admin_events') }}" class="btn btn-outline-warning me-2">📅 Gérer événements</a>
         <a href="{{ path('app_admin_clubs') }}" class="btn btn-outline-success me-2">🏛️ Gérer clubs</a>
         <a href="{{ path('app_admin_club_members') }}" class="btn btn-outline-info me-2">👥 Demandes adhésion</a>
-        <a href="{{ path('app_admin_recrutements') }}" class="btn btn-outline-secondary">🏛 Gérer recrutements</a>
+        <a href="{{ path('app_admin_recrutements') }}" class="btn btn-outline-secondary me-2">🏛 Gérer recrutements</a>
+        <a href="{{ path('app_admin_candidatures') }}" class="btn btn-outline-secondary me-2" style="border-color: #6f42c1; color: #6f42c1;">📋 Gérer candidatures</a>
         <a href="{{ path('app_admin_reclamations') }}" class="btn btn-outline-danger me-2">📋 Gérer Réclamations</a>
     </div>
 </div>

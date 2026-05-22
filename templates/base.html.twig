@@ -39,6 +39,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_recrutement_create') }}">➕ Créer recrutement</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_admin_candidatures') }}">📋 Gérer candidatures</a>
+                </li>
                 {% endif %}
                 
                 {% if is_granted('ROLE_ADMIN') %}

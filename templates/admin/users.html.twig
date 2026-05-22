@@ -2,10 +2,50 @@
 {% block title %}Gestion Utilisateurs{% endblock %}
 {% block body %}
 <div class="container mt-4">
-    <h1 class="mb-4">Gestion des Utilisateurs</h1>
+    <h1 class="mb-4">👥 Gestion des Utilisateurs</h1>
+
     {% for message in app.flashes('success') %}
         <div class="alert alert-success">{{ message }}</div>
     {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">{{ message }}</div>
+    {% endfor %}
+
+    {# Pending users #}
+    <h4 class="text-warning">⏳ Inscriptions en attente de validation</h4>
+    <table class="table table-bordered mb-5">
+        <thead class="table-warning">
+            <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if pendingUsers is empty %}
+            <tr><td colspan="4" class="text-center text-muted">Aucune inscription en attente</td></tr>
+        {% else %}
+            {% for user in pendingUsers %}
+            <tr>
+                <td>{{ user.firstname }} {{ user.lastname }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.phonenumber ?? '-' }}</td>
+                <td>
+                    <a href="{{ path('app_admin_approve_user', {id: user.id}) }}"
+                       class="btn btn-sm btn-success">✅ Approuver</a>
+                    <a href="{{ path('app_admin_reject_user', {id: user.id}) }}"
+                       class="btn btn-sm btn-danger"
+                       onclick="return confirm('Refuser et supprimer ce compte ?')">❌ Refuser</a>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+
+    {# Approved users #}
+    <h4 class="text-success">✅ Utilisateurs approuvés</h4>
     <table class="table table-striped">
         <thead class="table-dark">
             <tr>
@@ -16,7 +56,10 @@
             </tr>
         </thead>
         <tbody>
-            {% for user in users %}
+        {% if approvedUsers is empty %}
+            <tr><td colspan="4" class="text-center text-muted">Aucun utilisateur approuvé</td></tr>
+        {% else %}
+            {% for user in approvedUsers %}
             <tr>
                 <td>{{ user.firstname }} {{ user.lastname }}</td>
                 <td>{{ user.email }}</td>
@@ -30,8 +73,10 @@
                 </td>
             </tr>
             {% endfor %}
+        {% endif %}
         </tbody>
     </table>
-    <a href="{{ path('app_admin') }}" class="btn btn-secondary">Retour</a>
+
+    <a href="{{ path('app_admin') }}" class="btn btn-secondary">← Retour</a>
 </div>
 {% endblock %}

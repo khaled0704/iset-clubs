@@ -11,6 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\ExpressionLanguage\Expression;
 
 #[Route('/candidature')]
 final class CandidatureController extends AbstractController
@@ -84,5 +86,93 @@ final class CandidatureController extends AbstractController
         return $this->render('candidature/index.html.twig', [
             'candidatures' => $candidatures,
         ]);
+    }
+
+    #[Route('/manage', name: 'app_admin_candidatures')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_PRESIDENT") or is_granted("ROLE_RESPONSABLE")'))]
+    public function manage(CandidatureRepository $candidatureRepo): Response
+    {
+        $user = $this->getUser();
+        
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $candidatures = $candidatureRepo->findBy([], ['submittedAt' => 'DESC']);
+        } else {
+            // Find clubs where the user is a president or responsable
+            $managedClubs = [];
+            foreach ($user->getClubMembers() as $member) {
+                if (in_array($member->getRole(), ['President', 'Responsable']) && $member->getStatus() === 'approved') {
+                    $managedClubs[] = $member->getClub();
+                }
+            }
+
+            // Get all candidatures for those clubs
+            $candidatures = [];
+            foreach ($managedClubs as $club) {
+                foreach ($club->getRecrutements() as $recrutement) {
+                    foreach ($recrutement->getCandidatures() as $candidature) {
+                        $candidatures[] = $candidature;
+                    }
+                }
+            }
+            
+            // Sort by submittedAt DESC
+            usort($candidatures, function($a, $b) {
+                return $b->getSubmittedAt() <=> $a->getSubmittedAt();
+            });
+        }
+
+        return $this->render('admin/candidatures.html.twig', [
+            'candidatures' => $candidatures,
+        ]);
+    }
+
+    #[Route('/approve/{id}', name: 'app_admin_approve_candidature')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_PRESIDENT") or is_granted("ROLE_RESPONSABLE")'))]
+    public function approveCandidature(Candidature $candidature, EntityManagerInterface $em): Response
+    {
+        // Check if user has right to approve this candidature
+        if (!$this->canManageCandidature($this->getUser(), $candidature)) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas gérer cette candidature.');
+        }
+
+        $candidature->setStatus('approved');
+        $em->flush();
+        $this->addFlash('success', 'Candidature approuvée !');
+        return $this->redirectToRoute('app_admin_candidatures');
+    }
+
+    #[Route('/reject/{id}', name: 'app_admin_reject_candidature')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_PRESIDENT") or is_granted("ROLE_RESPONSABLE")'))]
+    public function rejectCandidature(Candidature $candidature, EntityManagerInterface $em): Response
+    {
+        // Check if user has right to reject this candidature
+        if (!$this->canManageCandidature($this->getUser(), $candidature)) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas gérer cette candidature.');
+        }
+
+        $candidature->setStatus('rejected');
+        $em->flush();
+        $this->addFlash('success', 'Candidature refusée !');
+        return $this->redirectToRoute('app_admin_candidatures');
+    }
+
+    private function canManageCandidature($user, Candidature $candidature): bool
+    {
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+
+        $club = $candidature->getRecrutement()?->getClub();
+        if (!$club) {
+            return false;
+        }
+
+        foreach ($user->getClubMembers() as $member) {
+            if ($member->getClub() === $club && in_array($member->getRole(), ['President', 'Responsable']) && $member->getStatus() === 'approved') {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
