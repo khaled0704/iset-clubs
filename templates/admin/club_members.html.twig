@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+{% block title %}Demandes d'adhésion{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">👥 Demandes d'adhésion aux clubs</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {% if pendingMembers is empty %}
+        <div class="alert alert-info">Aucune demande en attente.</div>
+    {% else %}
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Étudiant</th>
+                    <th>Club</th>
+                    <th>Date demande</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in pendingMembers %}
+                <tr>
+                    <td>{{ member.user.firstname }} {{ member.user.lastname }}</td>
+                    <td>{{ member.club.name }}</td>
+                    <td>{{ member.joinedAt|date('d/m/Y') }}</td>
+                    <td>
+                        <a href="{{ path('app_admin_approve_member', {id: member.id}) }}"
+                           class="btn btn-sm btn-success">Approuver</a>
+                        <a href="{{ path('app_admin_reject_member', {id: member.id}) }}"
+                           class="btn btn-sm btn-danger">Refuser</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <a href="{{ path('app_admin') }}" class="btn btn-secondary">Retour</a>
+</div>
+{% endblock %}

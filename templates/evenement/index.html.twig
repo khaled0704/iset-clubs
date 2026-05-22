@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+{% block title %}Événements{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">📅 Événements</h1>
+    
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {% if evenements is empty %}
+        <div class="alert alert-info">Aucun événement disponible pour le moment.</div>
+    {% else %}
+        <div class="row">
+            {% for event in evenements %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    {% if event.image %}
+                        <img src="/uploads/events/{{ event.image }}" class="card-img-top" style="height:180px;object-fit:cover">
+                    {% else %}
+                        <div class="bg-secondary text-white text-center py-5">
+                            <span class="fs-1">📅</span>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ event.nomEvenement }}</h5>
+                        <p class="text-muted small">
+                            📍 {{ event.lieu }}<br>
+                            🗓️ {{ event.dateDebut|date('d/m/Y') }}
+                        </p>
+                        <p class="card-text">{{ event.description|slice(0, 100) }}...</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ path('app_evenement_show', {id: event.id}) }}" 
+                           class="btn btn-primary w-100">Voir détails</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+{% block title %}Gestion Événements{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">Gestion des Événements</h1>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Nom</th>
+                <th>Date début</th>
+                <th>Lieu</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td>{{ event.nomEvenement }}</td>
+                <td>{{ event.dateDebut|date('d/m/Y') }}</td>
+                <td>{{ event.lieu }}</td>
+                <td>
+                    <span class="badge bg-{{ event.status == 'validated' ? 'success' : (event.status == 'rejected' ? 'danger' : 'warning') }}">
+                        {{ event.status }}
+                    </span>
+                </td>
+                <td>
+                    {% if event.status != 'validated' %}
+                    <a href="{{ path('app_admin_validate_event', {id: event.id}) }}"
+                       class="btn btn-sm btn-success">Valider</a>
+                    {% endif %}
+                    {% if event.status != 'rejected' %}
+                    <a href="{{ path('app_admin_reject_event', {id: event.id}) }}"
+                       class="btn btn-sm btn-danger">Refuser</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ path('app_admin') }}" class="btn btn-secondary">Retour</a>
+</div>
+{% endblock %}

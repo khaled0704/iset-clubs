@@ -16,6 +16,9 @@ class ClubMember
     #[ORM\Column(length: 50)]
     private ?string $role = null;
 
+    #[ORM\Column(length: 50)]
+    private string $status = 'pending';
+
     #[ORM\Column]
     private ?\DateTime $joinedAt = null;
 
@@ -77,6 +80,16 @@ class ClubMember
     {
         $this->club = $club;
 
+        return $this;
+    }
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
         return $this;
     }
 }

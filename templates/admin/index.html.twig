@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body text-center">
+                    <h2>{{ totalUsers }}</h2>
+                    <p>Utilisateurs</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body text-center">
+                    <h2>{{ totalClubs }}</h2>
+                    <p>Clubs</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body text-center">
+                    <h2>{{ totalEvents }}</h2>
+                    <p>Événements</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger">
+                <div class="card-body text-center">
+                    <h2>{{ totalReclamations }}</h2>
+                    <p>Réclamations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">Derniers utilisateurs</div>
+                <ul class="list-group list-group-flush">
+                    {% for user in recentUsers %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ user.firstname }} {{ user.lastname }}</span>
+                        <small class="text-muted">{{ user.email }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="card-footer">
+                    <a href="{{ path('app_admin_users') }}" class="btn btn-sm btn-primary">Voir tout</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">Derniers événements</div>
+                <ul class="list-group list-group-flush">
+                    {% for event in recentEvents %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ event.nomEvenement }}</span>
+                        <span class="badge bg-{{ event.status == 'validated' ? 'success' : (event.status == 'rejected' ? 'danger' : 'warning') }}">
+                            {{ event.status }}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="card-footer">
+                    <a href="{{ path('app_admin_events') }}" class="btn btn-sm btn-primary">Voir tout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-2">
+        <a href="{{ path('app_admin_users') }}" class="btn btn-outline-primary me-2">👥 Gérer utilisateurs</a>
+        <a href="{{ path('app_admin_events') }}" class="btn btn-outline-warning me-2">📅 Gérer événements</a>
+        <a href="{{ path('app_admin_clubs') }}" class="btn btn-outline-success">🏛️ Gérer clubs</a>
+        <a href="{{ path('app_admin_club_members') }}" class="btn btn-outline-info me-2">👥 Demandes adhésion</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+{% block title %}Gestion Utilisateurs{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">Gestion des Utilisateurs</h1>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Rôles</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.firstname }} {{ user.lastname }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.roles|join(', ') }}</td>
+                <td>
+                    <a href="{{ path('app_admin_delete_user', {id: user.id}) }}"
+                       class="btn btn-sm btn-danger"
+                       onclick="return confirm('Supprimer cet utilisateur ?')">
+                        Supprimer
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ path('app_admin') }}" class="btn btn-secondary">Retour</a>
+</div>
+{% endblock %}

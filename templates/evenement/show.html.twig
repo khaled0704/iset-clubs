@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ evenement.nomEvenement }}{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">{{ message }}</div>
+    {% endfor %}
+
+    <div class="row">
+        <div class="col-md-8">
+            <h1>{{ evenement.nomEvenement }}</h1>
+            <p class="text-muted">
+                📍 {{ evenement.lieu }} &nbsp;|&nbsp;
+                🗓️ {{ evenement.dateDebut|date('d/m/Y') }}
+                {% if evenement.dateFin %}
+                    → {{ evenement.dateFin|date('d/m/Y') }}
+                {% endif %}
+            </p>
+            <hr>
+            <p>{{ evenement.description }}</p>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        {% if alreadyParticipating %}
+                            <div class="alert alert-success">✅ Vous êtes inscrit !</div>
+                        {% else %}
+                            <a href="{{ path('app_evenement_participer', {id: evenement.id}) }}"
+                               class="btn btn-success w-100">S'inscrire à l'événement</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="btn btn-outline-primary w-100">
+                            Connectez-vous pour s'inscrire
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if alreadyParticipating %}
+            <div class="card shadow-sm">
+                <div class="card-header">💬 Laisser un feedback</div>
+                <div class="card-body">
+                    {{ form_start(feedbackForm) }}
+                        <div class="mb-3">
+                            {{ form_label(feedbackForm.content) }}
+                            {{ form_widget(feedbackForm.content) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(feedbackForm.rating) }}
+                            {{ form_widget(feedbackForm.rating) }}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Envoyer</button>
+                    {{ form_end(feedbackForm) }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <a href="{{ path('app_evenement_index') }}" class="btn btn-secondary mt-3">← Retour</a>
+</div>
+{% endblock %}

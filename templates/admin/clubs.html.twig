@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block title %}Gestion Clubs{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">Gestion des Clubs</h1>
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Nom</th>
+                <th>Domaine</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for club in clubs %}
+            <tr>
+                <td>{{ club.name }}</td>
+                <td>{{ club.domain }}</td>
+                <td>
+                    <span class="badge bg-{{ club.status == 'active' ? 'success' : 'warning' }}">
+                        {{ club.status }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ path('app_admin') }}" class="btn btn-secondary">Retour</a>
+</div>
+{% endblock %}
