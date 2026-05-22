@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Club;
 use App\Form\ClubType;
 use App\Repository\ClubRepository;
+use App\Repository\ClubMemberRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,11 +60,20 @@ final class ClubController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_club_show', methods: ['GET'])]
-    public function show(Club $club): Response
+   #[Route('/{id}', name: 'app_club_show', methods: ['GET'])]
+    public function show(Club $club, ClubMemberRepository $clubMemberRepo): Response
     {
+        $isMember = null;
+        if ($this->getUser()) {
+            $isMember = $clubMemberRepo->findOneBy([
+                'user' => $this->getUser(),
+                'club' => $club
+            ]);
+        }
+
         return $this->render('club/show.html.twig', [
             'club' => $club,
+            'isMember' => $isMember,
         ]);
     }
 
