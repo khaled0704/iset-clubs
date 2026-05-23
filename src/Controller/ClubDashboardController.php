@@ -44,4 +44,53 @@ class ClubDashboardController extends AbstractController
             'recrutements' => $club->getRecrutements(),
         ]);
     }
+    #[Route('/mon-club/approve-member/{id}', name: 'app_club_approve_member')]
+    public function approveMember(
+        \App\Entity\ClubMember $member,
+        EntityManagerInterface $em,
+        \App\Repository\ClubMemberRepository $clubMemberRepo
+    ): Response {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $user = $this->getUser();
+
+        $myMembership = $clubMemberRepo->findOneBy([
+            'user' => $user,
+            'club' => $member->getClub(),
+            'status' => 'approved'
+        ]);
+
+        if (!$myMembership || !in_array($myMembership->getRole(), ['President', 'Responsable'])) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $member->setStatus('approved');
+        $em->flush();
+        $this->addFlash('success', 'Membre approuvé !');
+        return $this->redirectToRoute('app_mon_club');
+    }
+
+    #[Route('/mon-club/reject-member/{id}', name: 'app_club_reject_member')]
+    public function rejectMember(
+        \App\Entity\ClubMember $member,
+        EntityManagerInterface $em,
+        \App\Repository\ClubMemberRepository $clubMemberRepo
+    ): Response {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $user = $this->getUser();
+
+        $myMembership = $clubMemberRepo->findOneBy([
+            'user' => $user,
+            'club' => $member->getClub(),
+            'status' => 'approved'
+        ]);
+
+        if (!$myMembership || !in_array($myMembership->getRole(), ['President', 'Responsable'])) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $em->remove($member);
+        $em->flush();
+        $this->addFlash('success', 'Demande refusée !');
+        return $this->redirectToRoute('app_mon_club');
+    }
 }

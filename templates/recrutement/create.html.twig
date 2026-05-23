@@ -1,16 +1,28 @@
 {% extends 'base.html.twig' %}
 {% block title %}Créer un recrutement{% endblock %}
 {% block body %}
-<div class="container mt-4">
-    <h1 class="mb-4">📋 Créer un recrutement</h1>
+<div class="container mt-4" style="max-width: 700px">
+    <h1 class="mb-4">💼 Créer un recrutement</h1>
 
     {{ form_start(form) }}
-        <div class="mb-3">{{ form_row(form.title) }}</div>
-        <div class="mb-3">{{ form_row(form.description) }}</div>
-        <div class="mb-3">{{ form_row(form.requirements) }}</div>
-        <div class="mb-3">{{ form_row(form.deadline) }}</div>
-        <button type="submit" class="btn btn-primary">Créer</button>
-        <a href="{{ path('app_recrutement_index') }}" class="btn btn-secondary">Annuler</a>
+        <div class="mb-3">
+            {{ form_label(form.title, 'Titre', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.requirements, 'Prérequis', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.requirements, {'attr': {'class': 'form-control', 'rows': 3}}) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.deadline, 'Date limite', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.deadline, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Créer le recrutement</button>
+        <a href="{{ path('app_recrutement_index') }}" class="btn btn-secondary w-100 mt-2">Annuler</a>
     {{ form_end(form) }}
 </div>
 {% endblock %}

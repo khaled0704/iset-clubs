@@ -18,8 +18,6 @@ class RecrutementType extends AbstractType
             ->add('description')
             ->add('requirements')
             ->add('deadline')
-            ->add('status')
-            ->add('createdAt')
 
         ;
     }

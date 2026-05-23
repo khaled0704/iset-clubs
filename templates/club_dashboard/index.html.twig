@@ -76,6 +76,7 @@
                         <th>Email</th>
                         <th>Rôle</th>
                         <th>Statut</th>
+                        {% if isManager %}<th>Actions</th>{% endif %}   
                     </tr>
                 </thead>
                 <tbody>
@@ -89,6 +90,16 @@
                                 {{ member.status }}
                             </span>
                         </td>
+                        {% if isManager %}
+                        <td>
+                            {% if member.status == 'pending' %}
+                                <a href="{{ path('app_club_approve_member', {id: member.id}) }}" 
+                                class="btn btn-sm btn-success">Approuver</a>
+                                <a href="{{ path('app_club_reject_member', {id: member.id}) }}" 
+                                class="btn btn-sm btn-danger">Refuser</a>
+                            {% endif %}
+                        </td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

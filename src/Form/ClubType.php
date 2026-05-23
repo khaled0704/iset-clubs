@@ -30,8 +30,6 @@ class ClubType extends AbstractType
                 ],
             ])
             ->add('wbsite')
-            ->add('status')
-            ->add('createdAt')
         ;
     }
 
