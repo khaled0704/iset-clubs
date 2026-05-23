@@ -39,6 +39,7 @@ class ClubDashboardController extends AbstractController
             'club' => $club,
             'membership' => $membership,
             'role' => $role,
+            'evenements' => $club->getEvenements(),
             'isManager' => $isManager,
             'members' => $club->getClubMembers(),
             'recrutements' => $club->getRecrutements(),

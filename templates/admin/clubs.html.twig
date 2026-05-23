@@ -61,6 +61,7 @@
                 <th>Domaine</th>
                 <th>Créé le</th>
                 <th>Membres</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -73,6 +74,13 @@
                     <td>{{ club.domain }}</td>
                     <td>{{ club.createdAt|date('d/m/Y') }}</td>
                     <td>{{ club.clubMembers|length }}</td>
+                    <td>
+    <a href="{{ path('app_admin_delete_club', {id: club.id}) }}"
+       class="btn btn-danger btn-sm"
+       onclick="return confirm('Supprimer ce club et toutes ses données ?')">
+        🗑 Supprimer
+    </a>
+</td>
                 </tr>
             {% endif %}
         {% endfor %}

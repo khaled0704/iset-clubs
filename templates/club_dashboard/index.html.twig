@@ -72,10 +72,12 @@
             <table class="table table-striped">
                 <thead class="table-dark">
                     <tr>
-                        <th>Nom</th>
+                        <th>Nom et Prenom</th>
                         <th>Email</th>
                         <th>Rôle</th>
+                         {% if isManager %}
                         <th>Statut</th>
+                        {% endif %} 
                         {% if isManager %}<th>Actions</th>{% endif %}   
                     </tr>
                 </thead>
@@ -85,11 +87,13 @@
                         <td>{{ member.user.firstname }} {{ member.user.lastname }}</td>
                         <td>{{ member.user.email }}</td>
                         <td>{{ member.role }}</td>
+                       {% if isManager %}
                         <td>
                             <span class="badge bg-{{ member.status == 'approved' ? 'success' : 'warning' }}">
                                 {{ member.status }}
                             </span>
                         </td>
+                        {% endif %} 
                         {% if isManager %}
                         <td>
                             {% if member.status == 'pending' %}
@@ -108,6 +112,7 @@
     </div>
 
     {# Recrutements section #}
+     {% if isManager %}
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">💼 Recrutements</h5>
@@ -140,6 +145,48 @@
                             </td>
                             <td>
                                 <a href="{{ path('app_recrutement_show', {id: recrutement.id}) }}" 
+                                   class="btn btn-sm btn-primary">Voir</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+     <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">💼 Evenements</h5>
+            {% if isManager %}
+            <a href="{{ path('app_evenement_create') }}" class="btn btn-sm btn-success">+ Nouveau</a>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            {% if evenements is empty %}
+                <p class="text-muted">Aucun evenement pour le moment.</p>
+            {% else %}
+                <table class="table table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Titre</th>
+                            <th>Deadline</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for evenement in evenements %}
+                        <tr>
+                            <td>{{ evenement.nomEvenement }}</td>
+<td>{{ evenement.dateDebut|date('d/m/Y') }}</td>
+                            <td>
+                                <span class="badge bg-{{ evenement.status == 'validated' ? 'success' : 'warning' }}">
+                                    {{ evenement.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ path('app_evenement_show', {id: evenement.id}) }}" 
                                    class="btn btn-sm btn-primary">Voir</a>
                             </td>
                         </tr>

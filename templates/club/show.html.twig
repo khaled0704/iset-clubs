@@ -39,7 +39,19 @@
                 </p>
             {% endif %}
             <p><strong>Créé le:</strong> {{ club.createdAt ? club.createdAt|date('d/m/Y') : '' }}</p>
-
+            <p><strong>Président:</strong>
+    {% set president = null %}
+    {% for member in club.clubMembers %}
+        {% if member.role == 'President' and member.status == 'approved' %}
+            {% set president = member %}
+        {% endif %}
+    {% endfor %}
+    {% if president %}
+        {{ president.user.firstname }} {{ president.user.lastname }}
+    {% else %}
+        <span class="text-muted">Non assigné</span>
+    {% endif %}
+</p>
             <div class="mt-4">
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 {% if isMember %}

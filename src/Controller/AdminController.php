@@ -141,19 +141,19 @@ class AdminController extends AbstractController
     }
     #[Route('/clubs/validate/{id}', name: 'app_admin_validate_club')]
     public function validateClub(
-        \App\Entity\Club $club, 
+        \App\Entity\Club $club,
         EntityManagerInterface $em,
         \App\Repository\ClubMemberRepository $clubMemberRepo
     ): Response {
         $club->setStatus('validated');
-        
+
         foreach ($club->getClubMembers() as $member) {
             if ($member->getRole() === 'President') {
                 $member->setStatus('approved');
                 $member->getUser()->setRoles(['ROLE_PRESIDENT']);
             }
         }
-        
+
         $em->flush();
         $this->addFlash('success', 'Club validé et président approuvé !');
         return $this->redirectToRoute('app_admin_clubs');
@@ -244,5 +244,38 @@ class AdminController extends AbstractController
         $this->addFlash('success', 'Réclamation refusée !');
         return $this->redirectToRoute('app_admin_reclamations');
     }
+    #[Route('/clubs/delete/{id}', name: 'app_admin_delete_club')]
+    public function deleteClub(Club $club, EntityManagerInterface $em): Response
+    {
+        // Remove all members first
+        foreach ($club->getClubMembers() as $member) {
+            $em->remove($member);
+        }
 
+        // Remove all recrutements and their candidatures
+        foreach ($club->getRecrutements() as $recrutement) {
+            foreach ($recrutement->getCandidatures() as $candidature) {
+                $em->remove($candidature);
+            }
+            $em->remove($recrutement);
+        }
+
+        // Remove participations and feedbacks before evenements
+        foreach ($club->getEvenements() as $evenement) {
+            foreach ($evenement->getParticipations() as $participation) {
+                $em->remove($participation);
+            }
+            foreach ($evenement->getFeedback() as $feedback) {
+                $em->remove($feedback);
+            }
+            $em->remove($evenement);
+        }
+
+        $em->flush();
+        $em->remove($club);
+        $em->flush();
+
+        $this->addFlash('success', 'Club supprimé !');
+        return $this->redirectToRoute('app_admin_clubs');
+    }
 }

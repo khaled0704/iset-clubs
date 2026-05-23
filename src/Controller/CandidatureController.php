@@ -93,7 +93,7 @@ final class CandidatureController extends AbstractController
     public function manage(CandidatureRepository $candidatureRepo): Response
     {
         $user = $this->getUser();
-        
+
         if ($this->isGranted('ROLE_ADMIN')) {
             $candidatures = $candidatureRepo->findBy([], ['submittedAt' => 'DESC']);
         } else {
@@ -114,9 +114,9 @@ final class CandidatureController extends AbstractController
                     }
                 }
             }
-            
+
             // Sort by submittedAt DESC
-            usort($candidatures, function($a, $b) {
+            usort($candidatures, function ($a, $b) {
                 return $b->getSubmittedAt() <=> $a->getSubmittedAt();
             });
         }
@@ -128,19 +128,40 @@ final class CandidatureController extends AbstractController
 
     #[Route('/approve/{id}', name: 'app_admin_approve_candidature')]
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_PRESIDENT") or is_granted("ROLE_RESPONSABLE")'))]
-    public function approveCandidature(Candidature $candidature, EntityManagerInterface $em): Response
-    {
-        // Check if user has right to approve this candidature
+    public function approveCandidature(
+        Candidature $candidature,
+        EntityManagerInterface $em,
+        \App\Repository\ClubMemberRepository $clubMemberRepo
+    ): Response {
         if (!$this->canManageCandidature($this->getUser(), $candidature)) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas gérer cette candidature.');
         }
 
         $candidature->setStatus('approved');
+
+        // Add the user as a club member if not already one
+        $club = $candidature->getRecrutement()->getClub();
+        $user = $candidature->getUser();
+
+        $existingMember = $clubMemberRepo->findOneBy([
+            'user' => $user,
+            'club' => $club,
+        ]);
+
+        if (!$existingMember) {
+            $member = new \App\Entity\ClubMember();
+            $member->setUser($user);
+            $member->setClub($club);
+            $member->setRole('membre');
+            $member->setStatus('approved');
+            $member->setJoinedAt(new \DateTime());
+            $em->persist($member);
+        }
+
         $em->flush();
-        $this->addFlash('success', 'Candidature approuvée !');
+        $this->addFlash('success', 'Candidature approuvée et membre ajouté au club !');
         return $this->redirectToRoute('app_admin_candidatures');
     }
-
     #[Route('/reject/{id}', name: 'app_admin_reject_candidature')]
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_PRESIDENT") or is_granted("ROLE_RESPONSABLE")'))]
     public function rejectCandidature(Candidature $candidature, EntityManagerInterface $em): Response
