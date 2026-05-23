@@ -31,19 +31,29 @@ class AdminController extends AbstractController
         EvenementRepository $evenementRepo,
         ReclamationRepository $reclamationRepo,
         RecrutementRepository $recrutementRepo,
-        CandidatureRepository $candidatureRepo
+        CandidatureRepository $candidatureRepo,
+        EntityManagerInterface $em
     ): Response {
         return $this->render('admin/index.html.twig', [
-            'totalUsers' => count($userRepo->findBy(['isApproved' => true])),
-            'totalPendingUsers' => count($userRepo->findBy(['isApproved' => false])),
+            'totalUsers' => count($userRepo->findAll()),
             'totalClubs' => count($clubRepo->findAll()),
+
             'totalEvents' => count($evenementRepo->findAll()),
             'totalReclamations' => count($reclamationRepo->findAll()),
             'totalRecrutements' => count($recrutementRepo->findAll()),
-            'totalCandidatures' => count($candidatureRepo->findAll()),
+            'totalCandidatures' => count($em->getRepository(\App\Entity\Candidature::class)->findAll()),
             'recentUsers' => $userRepo->findBy([], ['id' => 'DESC'], 5),
             'recentEvents' => $evenementRepo->findBy([], ['id' => 'DESC'], 5),
             'recentRecrutements' => $recrutementRepo->findBy([], ['id' => 'DESC'], 5),
+
+            // Pending counts for badges
+            'totalPendingUsers' => count($userRepo->findBy(['isVerified' => 0])),
+            'totalPendingEvents' => count($evenementRepo->findBy(['status' => 'pending'])),
+            'totalPendingClubs' => count($clubRepo->findBy(['status' => 'pending'])),
+            'totalPendingClubMembers' => count($em->getRepository(\App\Entity\ClubMember::class)->findBy(['status' => 'pending'])),
+            'totalPendingRecrutements' => count($recrutementRepo->findBy(['status' => 'pending'])),
+            'totalPendingCandidatures' => count($em->getRepository(\App\Entity\Candidature::class)->findBy(['status' => 'pending'])),
+            'totalPendingReclamations' => count($reclamationRepo->findBy(['status' => 'pending'])),
         ]);
     }
 

@@ -1,131 +1,130 @@
 {% extends 'base.html.twig' %}
 {% block title %}Admin Dashboard{% endblock %}
 {% block body %}
-<div class="container mt-4">
-    <h1 class="mb-4">Admin Dashboard</h1>
+<style>
+.adm { padding: 1.5rem; background: #0f1117; min-height: 100vh; font-size: 15px; }
+.adm-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; }
+.adm-title { font-size: 26px; font-weight: 500; margin: 0 0 4px; color: #f1f3f5; }
+.adm-sub { font-size: 14px; color: #868e96; margin: 0; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+.stat { background: #1a1d27; border: 1px solid #2c2f3e; border-radius: 12px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 14px; }
+.stat-ico { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.stat-n { font-size: 26px; font-weight: 500; line-height: 1; color: #f1f3f5; }
+.stat-l { font-size: 13px; color: #868e96; margin-top: 4px; }
+.main { display: grid; grid-template-columns: 1.3fr 1fr; gap: 12px; margin-bottom: 12px; }
+.card-adm { background: #1a1d27; border: 1px solid #2c2f3e; border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+.card-hd { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid #2c2f3e; }
+.card-hd-title { font-size: 14px; font-weight: 500; color: #f1f3f5; display: flex; align-items: center; gap: 7px; }
+.adm-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 18px; border-bottom: 1px solid #22252f; }
+.adm-row:last-child { border-bottom: none; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: #1e3a5f; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: #74b0f4; flex-shrink: 0; }
+.pill { font-size: 12px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+.pill-g { background: #14532d; color: #86efac; }
+.pill-y { background: #78350f; color: #fcd34d; }
+.pill-r { background: #7f1d1d; color: #fca5a5; }
+.nav-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 16px 18px; }
+.nav-btn { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 14px 8px; background: #22252f; border: 1px solid #2c2f3e; border-radius: 10px; text-decoration: none; position: relative; }
+.nav-btn:hover { background: #2a2d3a; }
+.nav-ico { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.nav-label { font-size: 13px; color: #ced4da; text-align: center; }
+.nav-badge { position: absolute; top: 7px; right: 7px; background: #dc3545; color: #fff; font-size: 10px; font-weight: 500; padding: 2px 6px; border-radius: 20px; }
+</style>
 
-    {# Stats cards #}
-    <div class="row mb-4">
-        <div class="col-md-2">
-            <div class="card text-white bg-primary">
-                <div class="card-body text-center">
-                    <h2>{{ totalUsers }}</h2>
-                    <p>Utilisateurs</p>
-                </div>
-            </div>
+<div class="adm">
+
+  <div class="adm-header" style="margin-left: 600px;">
+    <div>
+      <h1 class="adm-title">Admin dashboard</h1>
+      <p class="adm-sub">Vue d'ensemble — ISET Clubs</p>
+    </div>
+    
+  </div>
+<div class="card-adm">
+    <div class="card-hd">
+      <span class="card-hd-title"><i class="ti ti-layout-grid" style="font-size:16px;"></i> Navigation rapide</span>
+    </div>
+    <div class="nav-grid">
+    
+      <a href="{{ path('app_admin_users') }}" class="nav-btn">
+        <div class="nav-ico" style="background:#0c2340;"><i class="ti ti-users" style="font-size:20px;color:#74b0f4;"></i></div>
+        <div><div class="stat-n">{{ totalUsers }}</div><div class="stat-l"></div></div>
+        <span class="nav-label">Utilisateurs</span>
+        {% if totalPendingUsers > 0 %}<span class="nav-badge">{{ totalPendingUsers }}</span>{% endif %}
+      </a>
+      <a href="{{ path('app_admin_events') }}" class="nav-btn">
+        <div class="nav-ico" style="background:#3a1f00;"><i class="ti ti-calendar-event" style="font-size:20px;color:#fcd34d;"></i></div>
+        <div><div class="stat-n">{{ totalEvents }}</div><div class="stat-l"></div></div>
+        <span class="nav-label">Événements</span>
+        {% if totalPendingEvents > 0 %}<span class="nav-badge">{{ totalPendingEvents }}</span>{% endif %}
+      </a>
+      <a href="{{ path('app_admin_clubs') }}" class="nav-btn">
+        <div class="nav-ico" style="background:#0a2e1a;"><i class="ti ti-building" style="font-size:20px;color:#6ee7b7;"></i></div>
+        <div><div class="stat-n">{{ totalClubs }}</div><div class="stat-l"></div></div>
+        <span class="nav-label">Clubs</span>
+        {% if totalPendingClubs > 0 %}<span class="nav-badge">{{ totalPendingClubs }}</span>{% endif %}
+      </a>
+       
+       
+       
+      <a href="{{ path('app_admin_reclamations') }}" class="nav-btn">
+        <div class="nav-ico" style="background:#3b0f0f;"><i class="ti ti-message-report" style="font-size:20px;color:#fca5a5;"></i></div>
+        <div><div class="stat-n">{{ totalReclamations }}</div><div class="stat-l"></div></div>
+        <span class="nav-label">Réclamations</span>
+        {% if totalPendingReclamations > 0 %}<span class="nav-badge">{{ totalPendingReclamations }}</span>{% endif %}
+      </a>
+    </div>
+  </div>
+  
+
+  <div class="main">
+    <div class="card-adm">
+      <div class="card-hd">
+        <span class="card-hd-title"><i class="ti ti-users" style="font-size:16px;"></i> Derniers utilisateurs</span>
+        <a href="{{ path('app_admin_users') }}" style="font-size:13px;color:#868e96;text-decoration:none;">Voir tout →</a>
+      </div>
+      {% for user in recentUsers %}
+      <div class="adm-row">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="avatar">{{ user.firstname|first|upper }}{{ user.lastname|first|upper }}</div>
+          <div>
+            <div style="font-size:14px;color:#f1f3f5;">{{ user.firstname }} {{ user.lastname }}</div>
+            <div style="font-size:12px;color:#868e96;">{{ user.email }}</div>
+          </div>
         </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success">
-                <div class="card-body text-center">
-                    <h2>{{ totalClubs }}</h2>
-                    <p>Clubs</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-warning">
-                <div class="card-body text-center">
-                    <h2>{{ totalEvents }}</h2>
-                    <p>Événements</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-info">
-                <div class="card-body text-center">
-                    <h2>{{ totalRecrutements }}</h2>
-                    <p>Recrutements</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-danger">
-                <div class="card-body text-center">
-                    <h2>{{ totalReclamations }}</h2>
-                    <p>Réclamations</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white" style="background-color: #6f42c1;">
-                <div class="card-body text-center">
-                    <h2>{{ totalCandidatures }}</h2>
-                    <p>Candidatures</p>
-                </div>
-            </div>
-        </div>
+      </div>
+      {% endfor %}
     </div>
 
-    {# Recent tables #}
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-header">👥 Derniers utilisateurs</div>
-                <ul class="list-group list-group-flush">
-                    {% for user in recentUsers %}
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>{{ user.firstname }} {{ user.lastname }}</span>
-                        <small class="text-muted">{{ user.email }}</small>
-                    </li>
-                    {% endfor %}
-                </ul>
-                <div class="card-footer">
-                    <a href="{{ path('app_admin_users') }}" class="btn btn-sm btn-primary">Voir tout</a>
-                </div>
-            </div>
+    <div>
+      <div class="card-adm">
+        <div class="card-hd">
+          <span class="card-hd-title"><i class="ti ti-calendar-event" style="font-size:16px;"></i> Événements récents</span>
+          <a href="{{ path('app_admin_events') }}" style="font-size:13px;color:#868e96;text-decoration:none;">Voir tout →</a>
         </div>
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-header">📅 Derniers événements</div>
-                <ul class="list-group list-group-flush">
-                    {% for event in recentEvents %}
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>{{ event.nomEvenement }}</span>
-                        <span class="badge bg-{{ event.status == 'validated' ? 'success' : (event.status == 'rejected' ? 'danger' : 'warning') }}">
-                            {{ event.status }}
-                        </span>
-                    </li>
-                    {% endfor %}
-                </ul>
-                <div class="card-footer">
-                    <a href="{{ path('app_admin_events') }}" class="btn btn-sm btn-primary">Voir tout</a>
-                </div>
-            </div>
+        {% for event in recentEvents %}
+        <div class="adm-row">
+          <span style="font-size:14px;color:#f1f3f5;">{{ event.nomEvenement }}</span>
+          <span class="pill {{ event.status == 'validated' ? 'pill-g' : (event.status == 'rejected' ? 'pill-r' : 'pill-y') }}">{{ event.status }}</span>
         </div>
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-header">🏛 Derniers recrutements</div>
-                <ul class="list-group list-group-flush">
-                    {% for recrutement in recentRecrutements %}
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>{{ recrutement.title }}</span>
-                        <span class="badge bg-{{ recrutement.status == 'validated' ? 'success' : (recrutement.status == 'rejected' ? 'danger' : 'warning') }}">
-                            {{ recrutement.status }}
-                        </span>
-                    </li>
-                    {% endfor %}
-                </ul>
-                <div class="card-footer">
-                    <a href="{{ path('app_admin_recrutements') }}" class="btn btn-sm btn-primary">Voir tout</a>
-                </div>
-            </div>
-        </div>
-    </div>
+        {% endfor %}
+      </div>
 
-    {# Quick action buttons #}
-    <div class="mt-2">
-        <a href="{{ path('app_admin_users') }}" class="btn btn-outline-primary me-2">
-            👥 Gérer utilisateurs
-            {% if totalPendingUsers > 0 %}
-                <span class="badge bg-danger">{{ totalPendingUsers }}</span>
-            {% endif %}
-        </a>
-        <a href="{{ path('app_admin_events') }}" class="btn btn-outline-warning me-2">📅 Gérer événements</a>
-        <a href="{{ path('app_admin_clubs') }}" class="btn btn-outline-success me-2">🏛️ Gérer clubs</a>
-        <a href="{{ path('app_admin_club_members') }}" class="btn btn-outline-info me-2">👥 Demandes adhésion</a>
-        <a href="{{ path('app_admin_recrutements') }}" class="btn btn-outline-secondary me-2">🏛 Gérer recrutements</a>
-        <a href="{{ path('app_admin_candidatures') }}" class="btn btn-outline-secondary me-2" style="border-color: #6f42c1; color: #6f42c1;">📋 Gérer candidatures</a>
-        <a href="{{ path('app_admin_reclamations') }}" class="btn btn-outline-danger me-2">📋 Gérer Réclamations</a>
+      <div class="card-adm">
+        <div class="card-hd">
+          <span class="card-hd-title"><i class="ti ti-id-badge" style="font-size:16px;"></i> Recrutements récents</span>
+          <a href="{{ path('app_admin_recrutements') }}" style="font-size:13px;color:#868e96;text-decoration:none;">Voir tout →</a>
+        </div>
+        {% for recrutement in recentRecrutements %}
+        <div class="adm-row">
+          <span style="font-size:14px;color:#f1f3f5;">{{ recrutement.title }}</span>
+          <span class="pill {{ recrutement.status == 'validated' ? 'pill-g' : 'pill-y' }}">{{ recrutement.status }}</span>
+        </div>
+        {% endfor %}
+      </div>
     </div>
+  </div>
+
+  
+
 </div>
 {% endblock %}

@@ -10,6 +10,13 @@
         <div class="alert alert-warning">{{ message }}</div>
     {% endfor %}
 
+    {% set isClubManager = false %}
+    {% for member in recrutement.club.clubMembers %}
+        {% if member.user == app.user and member.status == 'approved' and member.role in ['President', 'Responsable'] %}
+            {% set isClubManager = true %}
+        {% endif %}
+    {% endfor %}
+
     <div class="row">
         <div class="col-md-8">
             <div class="card shadow-sm mb-4">
@@ -35,24 +42,29 @@
                         <h5>Prérequis</h5>
                         <p>{{ recrutement.requirements }}</p>
                     {% endif %}
+
+                    {% if isClubManager %}
+                        <div class="mt-3">
+                            <a href="{{ path('app_recrutement_edit', {id: recrutement.id}) }}" 
+                               class="btn btn-warning">✏️ Modifier</a>
+                            <a href="{{ path('app_recrutement_delete', {id: recrutement.id}) }}" 
+                               class="btn btn-danger ms-2"
+                               onclick="return confirm('Supprimer ce recrutement ?')">🗑 Supprimer</a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
+        {% if is_granted('IS_AUTHENTICATED_FULLY') and not isClubManager %}
         <div class="col-md-4">
             <div class="card shadow-sm mb-4">
                 <div class="card-body text-center">
-                    {% if app.user %}
-                        {% if alreadyApplied %}
-                            <div class="alert alert-info">✅ Vous avez déjà postulé.</div>
-                        {% else %}
-                            <a href="{{ path('app_candidature_postuler', {id: recrutement.id}) }}" 
-                               class="btn btn-success w-100">Postuler</a>
-                        {% endif %}
+                    {% if alreadyApplied %}
+                        <div class="alert alert-info">✅ Vous avez déjà postulé.</div>
                     {% else %}
-                        <a href="{{ path('app_login') }}" class="btn btn-outline-primary w-100">
-                            Connectez-vous pour postuler
-                        </a>
+                        <a href="{{ path('app_candidature_postuler', {id: recrutement.id}) }}" 
+                           class="btn btn-success w-100">Postuler</a>
                     {% endif %}
                 </div>
             </div>
@@ -60,26 +72,31 @@
             <div class="card shadow-sm">
                 <div class="card-header">💬 Laisser un feedback</div>
                 <div class="card-body">
-                    {% if app.user %}
-                        {{ form_start(feedbackForm) }}
-                            <div class="mb-3">
-                                {{ form_label(feedbackForm.content) }}
-                                {{ form_widget(feedbackForm.content, {'attr': {'class': 'form-control', 'rows': 3}}) }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form_label(feedbackForm.rating) }}
-                                {{ form_widget(feedbackForm.rating, {'attr': {'class': 'form-control', 'min': 1, 'max': 5}}) }}
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Envoyer</button>
-                        {{ form_end(feedbackForm) }}
-                    {% else %}
-                        <div class="alert alert-info">
-                            <a href="{{ path('app_login') }}">Connectez-vous</a> pour laisser un feedback.
+                    {{ form_start(feedbackForm) }}
+                        <div class="mb-3">
+                            {{ form_label(feedbackForm.content) }}
+                            {{ form_widget(feedbackForm.content, {'attr': {'class': 'form-control', 'rows': 3}}) }}
                         </div>
-                    {% endif %}
+                        <div class="mb-3">
+                            {{ form_label(feedbackForm.rating) }}
+                            {{ form_widget(feedbackForm.rating, {'attr': {'class': 'form-control', 'min': 1, 'max': 5}}) }}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Envoyer</button>
+                    {{ form_end(feedbackForm) }}
                 </div>
             </div>
         </div>
+        {% elseif not is_granted('IS_AUTHENTICATED_FULLY') %}
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <a href="{{ path('app_login') }}" class="btn btn-outline-primary w-100">
+                        Connectez-vous pour postuler
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <a href="{{ path('app_recrutement_index') }}" class="btn btn-secondary mt-3">← Retour</a>

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+{% block title %}Modifier - {{ recrutement.title }}{% endblock %}
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark d-flex align-items-center gap-2">
+                    <span class="fs-5">✏️</span>
+                    <h5 class="mb-0">Modifier le recrutement</h5>
+                </div>
+                <div class="card-body p-4">
+
+                    {% for message in app.flashes('error') %}
+                        <div class="alert alert-danger">{{ message }}</div>
+                    {% endfor %}
+
+                    {{ form_start(form) }}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Titre</label>
+                        {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Description</label>
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Prérequis</label>
+                        {{ form_widget(form.requirements, {'attr': {'class': 'form-control', 'rows': 3}}) }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Deadline</label>
+                        {{ form_widget(form.deadline, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning px-4">
+                            💾 Enregistrer les modifications
+                        </button>
+                        <a href="{{ path('app_mon_club') }}" class="btn btn-outline-secondary px-4">
+                            Annuler
+                        </a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

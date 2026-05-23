@@ -47,7 +47,7 @@ final class RecrutementController extends AbstractController
 
 
 
-            $recrutement->setStatus('pending');
+            $recrutement->setStatus('validated');
             $recrutement->setCreatedAt(new \DateTime());
             $recrutement->setClub($clubMember->getClub());
             $em->persist($recrutement);
@@ -106,6 +106,68 @@ final class RecrutementController extends AbstractController
             'feedbackForm' => $feedbackForm->createView(),
         ]);
     }
+    #[Route('/{id}/edit', name: 'app_recrutement_edit', methods: ['GET', 'POST'])]
+    public function edit(
+        Recrutement $recrutement,
+        Request $request,
+        EntityManagerInterface $em
+    ): Response {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
+        $user = $this->getUser();
+        $clubMember = $em->getRepository(\App\Entity\ClubMember::class)->findOneBy([
+            'user' => $user,
+            'club' => $recrutement->getClub(),
+            'status' => 'approved'
+        ]);
+
+        if (!$clubMember || !in_array($clubMember->getRole(), ['President', 'Responsable'])) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(RecrutementType::class, $recrutement);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Recrutement modifié !');
+            return $this->redirectToRoute('app_mon_club');
+        }
+
+        return $this->render('recrutement/edit.html.twig', [
+            'form' => $form->createView(),
+            'recrutement' => $recrutement,
+        ]);
+    }
+
+    #[Route('/{id}/delete', name: 'app_recrutement_delete')]
+    public function delete(
+        Recrutement $recrutement,
+        EntityManagerInterface $em
+    ): Response {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $user = $this->getUser();
+        $clubMember = $em->getRepository(\App\Entity\ClubMember::class)->findOneBy([
+            'user' => $user,
+            'club' => $recrutement->getClub(),
+            'status' => 'approved'
+        ]);
+
+        if (!$clubMember || !in_array($clubMember->getRole(), ['President', 'Responsable'])) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // Delete candidatures first
+        foreach ($recrutement->getCandidatures() as $candidature) {
+            $em->remove($candidature);
+        }
+
+        $em->remove($recrutement);
+        $em->flush();
+
+        $this->addFlash('success', 'Recrutement supprimé !');
+        return $this->redirectToRoute('app_mon_club');
+    }
 
 }

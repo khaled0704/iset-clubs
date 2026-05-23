@@ -146,6 +146,13 @@
                             <td>
                                 <a href="{{ path('app_recrutement_show', {id: recrutement.id}) }}" 
                                    class="btn btn-sm btn-primary">Voir</a>
+                                    {% if isManager %}
+                                        <a href="{{ path('app_recrutement_edit', {id: recrutement.id}) }}" 
+                                        class="btn btn-sm btn-warning">Modifier</a>
+                                        <a href="{{ path('app_recrutement_delete', {id: recrutement.id}) }}" 
+                                        class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Supprimer ce recrutement ?')">Supprimer</a>
+                                    {% endif %} 
                             </td>
                         </tr>
                         {% endfor %}
