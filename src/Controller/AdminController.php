@@ -140,26 +140,27 @@ class AdminController extends AbstractController
         ]);
     }
     #[Route('/clubs/validate/{id}', name: 'app_admin_validate_club')]
-    public function validateClub(Club $club, EntityManagerInterface $em): Response
-    {
+    public function validateClub(
+        \App\Entity\Club $club, 
+        EntityManagerInterface $em,
+        \App\Repository\ClubMemberRepository $clubMemberRepo
+    ): Response {
         $club->setStatus('validated');
-
-        // Also approve the President member
+        
         foreach ($club->getClubMembers() as $member) {
             if ($member->getRole() === 'President') {
                 $member->setStatus('approved');
+                $member->getUser()->setRoles(['ROLE_PRESIDENT']);
             }
         }
-
+        
         $em->flush();
         $this->addFlash('success', 'Club validé et président approuvé !');
         return $this->redirectToRoute('app_admin_clubs');
     }
-
     #[Route('/clubs/reject/{id}', name: 'app_admin_reject_club')]
     public function rejectClub(Club $club, EntityManagerInterface $em): Response
     {
-        // Remove the pending President member too
         foreach ($club->getClubMembers() as $member) {
             $em->remove($member);
         }

@@ -1,13 +1,14 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Edit Club{% endblock %}
-
+{% block title %}Modifier le club{% endblock %}
 {% block body %}
-    <h1>Edit Club</h1>
+<div class="container mt-4" style="max-width: 700px">
+    <h1 class="mb-4">✏️ Modifier le club</h1>
 
-    {{ include('club/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('club/_form.html.twig', {'button_label': 'Enregistrer'}) }}
 
-    <a href="{{ path('app_club_index') }}">back to list</a>
-
-    {{ include('club/_delete_form.html.twig') }}
+    <div class="mt-3">
+        <a href="{{ path('app_club_index') }}" class="btn btn-secondary me-2">← Retour</a>
+        {{ include('club/_delete_form.html.twig') }}
+    </div>
+</div>
 {% endblock %}

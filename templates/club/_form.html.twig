@@ -1,10 +1,18 @@
-{{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
-    {{ form_widget(form) }}
+{{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'class': 'mt-3'}}) }}
+    {{ form_row(form.name, {'attr': {'class': 'form-control'}, 'label': 'Nom du club'}) }}
+    {{ form_row(form.description, {'attr': {'class': 'form-control'}, 'label': 'Description'}) }}
+    {{ form_row(form.domain, {'attr': {'class': 'form-control'}, 'label': 'Domaine'}) }}
+    {{ form_row(form.wbsite, {'attr': {'class': 'form-control'}, 'label': 'Site web'}) }}
+    
     {% if club.logo %}
-        <div style="margin: 10px 0;">
-            <p><strong>Current logo:</strong></p>
-            <img src="{{ asset('uploads/clubs/' ~ club.logo) }}" alt="Club logo" style="max-height: 120px; border-radius: 8px; border: 1px solid #ddd;">
+        <div class="mb-3">
+            <label class="form-label">Logo actuel</label><br>
+            <img src="{{ asset('uploads/clubs/' ~ club.logo) }}" 
+                 alt="Club logo" style="max-height: 120px; border-radius: 8px;">
         </div>
     {% endif %}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    
+    {{ form_row(form.logoFile, {'attr': {'class': 'form-control'}, 'label': 'Logo du club'}) }}
+    
+    <button class="btn btn-primary w-100 mt-3">{{ button_label|default('Créer le club') }}</button>
 {{ form_end(form) }}
