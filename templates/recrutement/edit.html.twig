@@ -1,56 +1,59 @@
 {% extends 'base.html.twig' %}
-{% block title %}Modifier - {{ recrutement.title }}{% endblock %}
+
+{% block title %}Modifier | {{ recrutement.title }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
+{% endblock %}
+
 {% block body %}
-<div class="container mt-5">
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-
-            <div class="card shadow">
-                <div class="card-header bg-warning text-dark d-flex align-items-center gap-2">
-                    <span class="fs-5">✏️</span>
-                    <h5 class="mb-0">Modifier le recrutement</h5>
+        <div class="col-lg-8">
+            <div class="iset-form">
+                <div class="text-center mb-4">
+                    <span class="display-1">✏️</span>
+                    <h1 class="display-5 fw-bold mt-2" style="color: var(--iset-dark-blue);">Modifier le recrutement</h1>
+                    <p class="text-muted">{{ recrutement.title }}</p>
                 </div>
-                <div class="card-body p-4">
 
-                    {% for message in app.flashes('error') %}
-                        <div class="alert alert-danger">{{ message }}</div>
-                    {% endfor %}
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger border-0 shadow-sm">{{ message }}</div>
+                {% endfor %}
 
-                    {{ form_start(form) }}
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Titre</label>
-                        {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Description</label>
-                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Prérequis</label>
-                        {{ form_widget(form.requirements, {'attr': {'class': 'form-control', 'rows': 3}}) }}
+                {{ form_start(form) }}
+                    
+                    <div class="mb-4">
+                        {{ form_label(form.title, "📌 Titre du poste", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(form.title, {'attr': {'class': 'form-control'}})}}
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-semibold">Deadline</label>
-                        {{ form_widget(form.deadline, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_label(form.description, "📝 Description", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 5, 'style': 'resize: vertical;'}})}}
                     </div>
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-warning px-4">
+                    <div class="mb-4">
+                        {{ form_label(form.requirements, "✅ Prérequis", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(form.requirements, {'attr': {'class': 'form-control', 'rows': 4, 'style': 'resize: vertical;'}})}}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_label(form.deadline, "⏰ Date limite", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(form.deadline, {'attr': {'class': 'form-control'}})}}
+                    </div>
+
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+                        <button type="submit" class="btn-iset-primary px-5 py-2">
                             💾 Enregistrer les modifications
                         </button>
-                        <a href="{{ path('app_mon_club') }}" class="btn btn-outline-secondary px-4">
-                            Annuler
+                        <a href="{{ path('app_mon_club') }}" class="btn-iset-outline px-4 py-2 text-decoration-none">
+                            ← Annuler
                         </a>
                     </div>
-
-                    {{ form_end(form) }}
-                </div>
+                {{ form_end(form) }}
             </div>
-
         </div>
     </div>
 </div>

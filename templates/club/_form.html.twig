@@ -1,18 +1,38 @@
 {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'class': 'mt-3'}}) }}
-    {{ form_row(form.name, {'attr': {'class': 'form-control'}, 'label': 'Nom du club'}) }}
-    {{ form_row(form.description, {'attr': {'class': 'form-control'}, 'label': 'Description'}) }}
-    {{ form_row(form.domain, {'attr': {'class': 'form-control'}, 'label': 'Domaine'}) }}
-    {{ form_row(form.wbsite, {'attr': {'class': 'form-control'}, 'label': 'Site web'}) }}
+    
+    <div class="mb-4">
+        {{ form_label(form.name, "Nom du club", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+        {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Ex: ISET Code Club'}})}}
+    </div>
+    
+    <div class="mb-4">
+        {{ form_label(form.description, "Description", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4, 'placeholder': 'Décrivez les activités du club...'}})}}
+    </div>
+    
+    <div class="mb-4">
+        {{ form_label(form.domain, "Domaine", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+        {{ form_widget(form.domain, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Technologie, Sport, Culture...'}})}}
+    </div>
+    
+    <div class="mb-4">
+        {{ form_label(form.wbsite, "Site web", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+        {{ form_widget(form.wbsite, {'attr': {'class': 'form-control', 'placeholder': 'https://...'}})}}
+    </div>
     
     {% if club.logo %}
-        <div class="mb-3">
-            <label class="form-label">Logo actuel</label><br>
+        <div class="mb-4 text-center">
+            <label class="form-label fw-semibold">Logo actuel</label><br>
             <img src="{{ asset('uploads/clubs/' ~ club.logo) }}" 
-                 alt="Club logo" style="max-height: 120px; border-radius: 8px;">
+                 alt="Club logo" style="max-height: 100px; border-radius: 12px; border: 2px solid var(--iset-border);">
         </div>
     {% endif %}
     
-    {{ form_row(form.logoFile, {'attr': {'class': 'form-control'}, 'label': 'Logo du club'}) }}
+    <div class="mb-4">
+        {{ form_label(form.logoFile, "Logo du club", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+        {{ form_widget(form.logoFile, {'attr': {'class': 'form-control'}})}}
+    </div>
     
-    <button class="btn btn-primary w-100 mt-3">{{ button_label|default('Créer le club') }}</button>
+    <button class="btn-iset-primary w-100 py-2">{{ button_label|default('Créer le club') }}</button>
+    
 {{ form_end(form) }}

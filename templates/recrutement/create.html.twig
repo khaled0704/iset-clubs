@@ -1,28 +1,73 @@
 {% extends 'base.html.twig' %}
-{% block title %}Créer un recrutement{% endblock %}
-{% block body %}
-<div class="container mt-4" style="max-width: 700px">
-    <h1 class="mb-4">💼 Créer un recrutement</h1>
 
-    {{ form_start(form) }}
-        <div class="mb-3">
-            {{ form_label(form.title, 'Titre', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+{% block title %}Créer un recrutement | ISET Events{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="iset-form">
+                <div class="text-center mb-4">
+                    <span class="display-1">📢</span>
+                    <h1 class="display-5 fw-bold mt-2" style="color: var(--iset-dark-blue);">Créer un recrutement</h1>
+                    <p class="text-muted">Publiez une offre pour votre club ISET</p>
+                    <div class="d-flex justify-content-center gap-2 mt-2">
+                        <span class="iset-badge iset-badge-tech">👥 Membre</span>
+                        <span class="iset-badge iset-badge-tech">💼 Responsable</span>
+                        <span class="iset-badge iset-badge-tech">🎯 Poste spécifique</span>
+                    </div>
+                </div>
+
+                {{ form_start(form) }}
+                    
+                    <div class="mb-4">
+                        {{ form_label(form.title, "📌 Titre du poste", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(form.title, {'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Ex: Responsable communication · Trésorier · Chef de projet'
+                        }})}}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_label(form.description, "📝 Description", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(form.description, {'attr': {
+                            'class': 'form-control',
+                            'rows': 5,
+                            'placeholder': '• Missions principales\n• Ce que nous offrons\n• Engagement attendu'
+                        }})}}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_label(form.requirements, "✅ Prérequis", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(form.requirements, {'attr': {
+                            'class': 'form-control',
+                            'rows': 4,
+                            'placeholder': '• Compétences requises\n• Disponibilité\n• Expérience souhaitée'
+                        }})}}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_label(form.deadline, "⏰ Date limite de candidature", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(form.deadline, {'attr': {'class': 'form-control'}})}}
+                        <div class="form-text">Les candidatures seront closes après cette date</div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+                        <button type="submit" class="btn-iset-primary px-5 py-2">
+                            ✨ Publier l'offre
+                        </button>
+                        <a href="{{ path('app_recrutement_index') }}" class="btn-iset-outline px-4 py-2 text-decoration-none">
+                            ← Annuler
+                        </a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
         </div>
-        <div class="mb-3">
-            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
-        </div>
-        <div class="mb-3">
-            {{ form_label(form.requirements, 'Prérequis', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.requirements, {'attr': {'class': 'form-control', 'rows': 3}}) }}
-        </div>
-        <div class="mb-3">
-            {{ form_label(form.deadline, 'Date limite', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.deadline, {'attr': {'class': 'form-control'}}) }}
-        </div>
-        <button type="submit" class="btn btn-primary w-100">Créer le recrutement</button>
-        <a href="{{ path('app_recrutement_index') }}" class="btn btn-secondary w-100 mt-2">Annuler</a>
-    {{ form_end(form) }}
+    </div>
 </div>
 {% endblock %}

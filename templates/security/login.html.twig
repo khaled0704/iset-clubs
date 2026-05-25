@@ -1,41 +1,79 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Connexion | ISET Events{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+{% endblock %}
 
 {% block body %}
-<form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5">
+            <div class="iset-form">
+                <div class="text-center mb-4">
+                    <div class="iset-hero" style="padding: 1rem; background: linear-gradient(135deg, var(--iset-dark-blue) 0%, var(--iset-blue) 100%); border-radius: 1rem; margin-bottom: 1.5rem;">
+                        <span class="display-1">🔐</span>
+                    </div>
+                    <h1 class="display-5 fw-bold mt-2" style="color: var(--iset-dark-blue);">Bon retour</h1>
+                    <p class="text-muted">Connectez-vous à votre compte</p>
+                </div>
 
-    {% for message in app.flashes('info') %}
-        <div class="alert alert-info">{{ message }}</div>
-    {% endfor %}
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
+                {% if error %}
+                    <div class="alert alert-danger border-0 shadow-sm" style="border-left: 5px solid var(--iset-red) !important;">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ error.messageKey|trans(error.messageData, 'security') }}
+                    </div>
+                {% endif %}
 
-    {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ logout_path() }}">Logout</a>
+                {% for message in app.flashes('info') %}
+                    <div class="alert alert-info border-0 shadow-sm" style="border-left: 5px solid var(--iset-blue) !important;">
+                        <i class="bi bi-info-circle-fill me-2"></i> {{ message }}
+                    </div>
+                {% endfor %}
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success border-0 shadow-sm" style="border-left: 5px solid var(--iset-success) !important;">
+                        <i class="bi bi-check-circle-fill me-2"></i> {{ message }}
+                    </div>
+                {% endfor %}
+
+                <form method="post">
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold" for="inputEmail">Adresse email</label>
+                        <input type="email" value="{{ last_username }}" name="email" id="inputEmail"
+                               class="form-control" placeholder="vous@example.com"
+                               autocomplete="email" required autofocus>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label fw-semibold mb-0" for="inputPassword">Mot de passe</label>
+                        </div>
+                        <input type="password" name="password" id="inputPassword"
+                               class="form-control" placeholder="••••••••"
+                               autocomplete="current-password" required>
+                    </div>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input type="checkbox" name="_remember_me" id="remember_me" class="form-check-input">
+                            <label class="form-check-label" for="remember_me">Se souvenir de moi</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-iset-primary w-100 py-2">
+                        🔑 Se connecter
+                    </button>
+                </form>
+
+                <p class="text-center mt-4 text-muted">
+                    Pas encore de compte ? <a href="{{ path('app_register') }}" style="color: var(--iset-blue);">S'inscrire</a>
+                </p>
+            </div>
         </div>
-    {% endif %}
-
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputEmail">Email</label>
-    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-    <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
-
-    <div class="checkbox mb-3">
-        <label>
-            <input type="checkbox" name="_remember_me"> Remember me
-        </label>
     </div>
-
-    <button class="btn btn-lg btn-primary" type="submit">
-        Sign in
-    </button>
-</form>
+</div>
 {% endblock %}

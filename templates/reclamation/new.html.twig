@@ -1,18 +1,47 @@
 {% extends 'base.html.twig' %}
-{% block title %}Nouvelle Réclamation{% endblock %}
+
+{% block title %}Nouvelle Réclamation | ISET Clubs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
+{% endblock %}
+
 {% block body %}
-<div class="container mt-4" style="max-width: 600px">
-    <h1 class="mb-4">📋 Nouvelle Réclamation</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="iset-form">
+                <div class="text-center mb-4">
+                    <span class="display-1">📋</span>
+                    <h1 class="display-5 fw-bold mt-2" style="color: var(--iset-dark-blue);">Nouvelle Réclamation</h1>
+                    <p class="text-muted">Décrivez votre problème ou suggestion</p>
+                </div>
 
-    {% for message in app.flashes('error') %}
-        <div class="alert alert-danger">{{ message }}</div>
-    {% endfor %}
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger border-0 shadow-sm">{{ message }}</div>
+                {% endfor %}
 
-    {{ form_start(form) }}
-        <div class="mb-3">{{ form_row(form.subject) }}</div>
-        <div class="mb-3">{{ form_row(form.message) }}</div>
-        <button type="submit" class="btn btn-primary">Envoyer</button>
-        <a href="{{ path('app_reclamation_index') }}" class="btn btn-secondary">Annuler</a>
-    {{ form_end(form) }}
+                {{ form_start(form) }}
+                    
+                    <div class="mb-4">
+                        {{ form_label(form.subject, "Sujet", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(form.subject, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Problème d\'accès au club'}})}}
+                    </div>
+                    
+                    <div class="mb-4">
+                        {{ form_label(form.message, "Message", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(form.message, {'attr': {'class': 'form-control', 'rows': 5, 'placeholder': 'Décrivez votre problème en détail...'}})}}
+                    </div>
+                    
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="submit" class="btn-iset-primary px-5 py-2">📤 Envoyer</button>
+                        <a href="{{ path('app_reclamation_index') }}" class="btn-iset-outline px-4 py-2 text-decoration-none">Annuler</a>
+                    </div>
+                    
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

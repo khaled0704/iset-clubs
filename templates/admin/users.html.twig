@@ -1,82 +1,82 @@
 {% extends 'base.html.twig' %}
-{% block title %}Gestion Utilisateurs{% endblock %}
+
+{% block title %}Gestion Utilisateurs | Admin{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
+{% endblock %}
+
 {% block body %}
-<div class="container mt-4">
-    <h1 class="mb-4">👥 Gestion des Utilisateurs</h1>
+<div class="container py-5">
+    <div class="iset-card" style="padding: 2rem;">
+        
+        <div class="text-center mb-4">
+            <span class="display-1">👥</span>
+            <h1 class="display-5 fw-bold mt-2" style="color: var(--iset-dark-blue);">Gestion des Utilisateurs</h1>
+        </div>
 
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
-    {% for message in app.flashes('warning') %}
-        <div class="alert alert-warning">{{ message }}</div>
-    {% endfor %}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success border-0 shadow-sm">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('warning') %}
+            <div class="alert alert-warning border-0 shadow-sm">{{ message }}</div>
+        {% endfor %}
 
-    {# Pending users #}
-    <h4 class="text-warning">⏳ Inscriptions en attente de validation</h4>
-    <table class="table table-bordered mb-5">
-        <thead class="table-warning">
-            <tr>
-                <th>Nom</th>
-                <th>Email</th>
-                <th>Téléphone</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% if pendingUsers is empty %}
-            <tr><td colspan="4" class="text-center text-muted">Aucune inscription en attente</td></tr>
-        {% else %}
-            {% for user in pendingUsers %}
-            <tr>
-                <td>{{ user.firstname }} {{ user.lastname }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.phonenumber ?? '-' }}</td>
-                <td>
-                    <a href="{{ path('app_admin_approve_user', {id: user.id}) }}"
-                       class="btn btn-sm btn-success">✅ Approuver</a>
-                    <a href="{{ path('app_admin_reject_user', {id: user.id}) }}"
-                       class="btn btn-sm btn-danger"
-                       onclick="return confirm('Refuser et supprimer ce compte ?')">❌ Refuser</a>
-                </td>
-            </tr>
-            {% endfor %}
-        {% endif %}
-        </tbody>
-    </table>
+        {# Pending users #}
+        <h3 class="text-warning mb-3">⏳ Inscriptions en attente de validation</h3>
+        <div class="table-responsive mb-5">
+            <table class="table table-dark table-hover">
+                <thead style="background: var(--iset-warning); color: #1a1a2e;">
+                    <tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                {% if pendingUsers is empty %}
+                    <tr><td colspan="4" class="text-center text-muted">Aucune inscription en attente</td></tr>
+                {% else %}
+                    {% for user in pendingUsers %}
+                    <tr>
+                        <td>{{ user.firstname }} {{ user.lastname }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.phonenumber ?? '-' }}</td>
+                        <td>
+                            <a href="{{ path('app_admin_approve_user', {id: user.id}) }}" class="btn-iset-primary btn-sm">✅ Approuver</a>
+                            <a href="{{ path('app_admin_reject_user', {id: user.id}) }}" class="btn-iset-danger btn-sm" onclick="return confirm('Refuser et supprimer ce compte ?')">❌ Refuser</a>
+                         </td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
 
-    {# Approved users #}
-    <h4 class="text-success">✅ Utilisateurs approuvés</h4>
-    <table class="table table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>Nom</th>
-                <th>Email</th>
-                <th>Rôles</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% if approvedUsers is empty %}
-            <tr><td colspan="4" class="text-center text-muted">Aucun utilisateur approuvé</td></tr>
-        {% else %}
-            {% for user in approvedUsers %}
-            <tr>
-                <td>{{ user.firstname }} {{ user.lastname }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.roles|join(', ') }}</td>
-                <td>
-                    <a href="{{ path('app_admin_delete_user', {id: user.id}) }}"
-                       class="btn btn-sm btn-danger"
-                       onclick="return confirm('Supprimer cet utilisateur ?')">
-                        Supprimer
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        {% endif %}
-        </tbody>
-    </table>
+        {# Approved users #}
+        <h3 class="text-success mb-3">✅ Utilisateurs approuvés</h3>
+        <div class="table-responsive">
+            <table class="table table-dark table-hover">
+                <thead style="background: var(--iset-success);">
+                    <tr><th>Nom</th><th>Email</th><th>Rôles</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                {% if approvedUsers is empty %}
+                    <tr><td colspan="4" class="text-center text-muted">Aucun utilisateur approuvé</td></tr>
+                {% else %}
+                    {% for user in approvedUsers %}
+                    <tr>
+                        <td>{{ user.firstname }} {{ user.lastname }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.roles|join(', ') }}</td>
+                        <td><a href="{{ path('app_admin_delete_user', {id: user.id}) }}" class="btn-iset-danger btn-sm" onclick="return confirm('Supprimer cet utilisateur ?')">Supprimer</a></td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
 
-    <a href="{{ path('app_admin') }}" class="btn btn-secondary">← Retour</a>
+        <div class="text-center mt-4">
+            <a href="{{ path('app_admin') }}" class="btn-iset-outline text-decoration-none px-4 py-2">← Retour</a>
+        </div>
+    </div>
 </div>
 {% endblock %}

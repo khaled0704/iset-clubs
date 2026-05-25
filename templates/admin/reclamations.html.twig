@@ -1,51 +1,57 @@
 {% extends 'base.html.twig' %}
-{% block title %}Admin - Réclamations{% endblock %}
+
+{% block title %}Admin - Réclamations | ISET Clubs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
+{% endblock %}
+
 {% block body %}
-<div class="container mt-4">
-    <h1 class="mb-4">📋 Gestion des Réclamations</h1>
+<div class="container py-5">
+    <div class="iset-card" style="padding: 2rem;">
+        
+        <div class="text-center mb-4">
+            <span class="display-1">📋</span>
+            <h1 class="display-5 fw-bold mt-2" style="color: var(--iset-dark-blue);">Gestion des Réclamations</h1>
+        </div>
 
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
-
-    <table class="table table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th>Utilisateur</th>
-                <th>Sujet</th>
-                <th>Message</th>
-                <th>Statut</th>
-                <th>Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for reclamation in reclamations %}
-            <tr>
-                <td>{{ reclamation.user.firstname }} {{ reclamation.user.lastname }}</td>
-                <td>{{ reclamation.subject }}</td>
-                <td>{{ reclamation.message|slice(0, 80) }}...</td>
-                <td>
-                    <span class="badge bg-{{ reclamation.status == 'resolved' ? 'success' : (reclamation.status == 'rejected' ? 'danger' : 'warning') }}">
-                        {{ reclamation.status }}
-                    </span>
-                </td>
-                <td>{{ reclamation.createdAt|date('d/m/Y') }}</td>
-                <td>
-                    {% if reclamation.status == 'pending' %}
-                        <a href="{{ path('app_admin_resolve_reclamation', {id: reclamation.id}) }}" 
-                           class="btn btn-success btn-sm">✅ Résoudre</a>
-                        <a href="{{ path('app_admin_reject_reclamation', {id: reclamation.id}) }}" 
-                           class="btn btn-danger btn-sm">❌ Rejeter</a>
-                    {% else %}
-                        <span class="text-muted">Traité</span>
-                    {% endif %}
-                </td>
-            </tr>
-        {% else %}
-            <tr><td colspan="6" class="text-center text-muted">Aucune réclamation</td></tr>
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success border-0 shadow-sm">{{ message }}</div>
         {% endfor %}
-        </tbody>
-    </table>
+
+        <div class="table-responsive">
+            <table class="table table-dark table-hover">
+                <thead style="background: var(--iset-dark-blue);">
+                    <tr><th>Utilisateur</th><th>Sujet</th><th>Message</th><th>Statut</th><th>Date</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                {% for reclamation in reclamations %}
+                    <tr>
+                        <td>{{ reclamation.user.firstname }} {{ reclamation.user.lastname }}</td>
+                        <td>{{ reclamation.subject }}</td>
+                        <td>{{ reclamation.message|slice(0, 80) }}...</td>
+                        <td>
+                            <span class="iset-badge" style="background: {{ reclamation.status == 'resolved' ? 'var(--iset-success)' : (reclamation.status == 'rejected' ? 'var(--iset-red)' : 'var(--iset-warning)') }}; color: white;">
+                                {{ reclamation.status }}
+                            </span>
+                        </td>
+                        <td>{{ reclamation.createdAt|date('d/m/Y') }}</td>
+                        <td>
+                            {% if reclamation.status == 'pending' %}
+                                <a href="{{ path('app_admin_resolve_reclamation', {id: reclamation.id}) }}" class="btn-iset-primary btn-sm">✅ Résoudre</a>
+                                <a href="{{ path('app_admin_reject_reclamation', {id: reclamation.id}) }}" class="btn-iset-danger btn-sm">❌ Rejeter</a>
+                            {% else %}
+                                <span class="text-muted">Traité</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="6" class="text-center text-muted">Aucune réclamation</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}

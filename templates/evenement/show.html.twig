@@ -1,75 +1,157 @@
 {% extends 'base.html.twig' %}
-{% block title %}{{ evenement.nomEvenement }}{% endblock %}
+
+{% block title %}{{ evenement.nomEvenement }} | ISET Events{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
+{% endblock %}
+
 {% block body %}
-<div class="container mt-4">
-    
+<div class="container py-4">
+    {# Flash messages #}
     {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
+        <div class="alert alert-success border-0 shadow-sm">{{ message }}</div>
     {% endfor %}
     {% for message in app.flashes('warning') %}
-        <div class="alert alert-warning">{{ message }}</div>
+        <div class="alert alert-warning border-0 shadow-sm">{{ message }}</div>
     {% endfor %}
 
-    <div class="row">
-        <div class="col-md-8">
-            <h1>{{ evenement.nomEvenement }}</h1>
-            <p class="text-muted">
-                📍 {{ evenement.lieu }} &nbsp;|&nbsp;
-                🗓️ {{ evenement.dateDebut|date('d/m/Y') }}
-                {% if evenement.dateFin %}
-                    → {{ evenement.dateFin|date('d/m/Y') }}
-                {% endif %}
-            </p>
-            <hr>
-            {% if evenement.image %}
-                        <img src="/uploads/events/{{ evenement.image }}" class="card-img-top" style="height:100px;width:100px;object-fit:cover">
-                    {% else %}
-                        <div class="bg-secondary text-white text-center py-5">
-                            <span class="fs-1">📅</span>
-                        </div>
-                    {% endif %}
-            <p>{{ evenement.description }}</p>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card shadow-sm mb-4">
-                <div class="card-body text-center">
-                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                        {% if alreadyParticipating %}
-                            <div class="alert alert-success">✅ Vous êtes inscrit !</div>
-                        {% else %}
-                            <a href="{{ path('app_evenement_participer', {id: evenement.id}) }}"
-                               class="btn btn-success w-100">S'inscrire à l'événement</a>
-                        {% endif %}
-                    {% else %}
-                        <a href="{{ path('app_login') }}" class="btn btn-outline-primary w-100">
-                            Connectez-vous pour s'inscrire
-                        </a>
+    {# Header with ISET context #}
+    <div class="iset-event-header">
+        <div class="d-flex justify-content-between align-items-start flex-wrap">
+            <div>
+                <span class="badge bg-white text-dark px-3 py-1 mb-2">🎓 Événement officiel ISET</span>
+                <h1 class="display-5 fw-bold mt-2">{{ evenement.nomEvenement }}</h1>
+                <div class="mt-2">
+                    <i class="bi bi-geo-alt"></i> <strong>{{ evenement.lieu }}</strong>
+                    &nbsp;|&nbsp;
+                    <i class="bi bi-calendar"></i> {{ evenement.dateDebut|date('l d F Y H:i')|capitalize }}
+                    {% if evenement.dateFin %}
+                        → {{ evenement.dateFin|date('d/m/Y H:i') }}
                     {% endif %}
                 </div>
             </div>
-
-            {% if alreadyParticipating %}
-            <div class="card shadow-sm">
-                <div class="card-header">💬 Laisser un feedback</div>
-                <div class="card-body">
-                    {{ form_start(feedbackForm) }}
-                        <div class="mb-3">
-                            {{ form_label(feedbackForm.content) }}
-                            {{ form_widget(feedbackForm.content) }}
-                        </div>
-                        <div class="mb-3">
-                            {{ form_label(feedbackForm.rating) }}
-                            {{ form_widget(feedbackForm.rating) }}
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Envoyer</button>
-                    {{ form_end(feedbackForm) }}
-                </div>
+            <div class="text-end">
+                <span class="display-6">🇹🇳</span>
             </div>
-            {% endif %}
         </div>
     </div>
 
-    <a href="{{ path('app_evenement_index') }}" class="btn btn-secondary mt-3">← Retour</a>
+    <div class="row g-4">
+        <div class="col-lg-7">
+            {# Image gallery zone #}
+            {% if evenement.image %}
+                <div class="rounded-4 overflow-hidden shadow-sm mb-4">
+                    <img src="/uploads/events/{{ evenement.image }}" class="w-100" style="max-height: 400px; object-fit: cover;" alt="{{ evenement.nomEvenement }}">
+                </div>
+            {% endif %}
+
+            {# Description card #}
+            <div class="iset-card p-4 mb-4">
+                <h3 class="fw-bold mb-3" style="color: var(--iset-dark-blue);">
+                    <i class="bi bi-pencil-square"></i> À propos
+                </h3>
+                <div class="lead" style="line-height: 1.7;">
+                    {{ evenement.description|nl2br }}
+                </div>
+            </div>
+
+            {# Practical info #}
+            <div class="iset-card p-4">
+                <h3 class="fw-bold mb-3" style="color: var(--iset-dark-blue);">
+                    <i class="bi bi-info-circle"></i> Infos pratiques
+                </h3>
+                <div class="row">
+                    <div class="col-sm-6 mb-2">
+                        <div class="iset-stat text-start p-3">
+                            <div class="small text-muted">📅 Date</div>
+                            <div class="fw-bold">{{ evenement.dateDebut|date('d/m/Y') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <div class="iset-stat text-start p-3">
+                            <div class="small text-muted">📍 Lieu</div>
+                            <div class="fw-bold">{{ evenement.lieu }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-2 text-muted small">
+                    <i class="bi bi-building"></i> Organisation : Club ISET · Bureau des étudiants
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            {# Participation card #}
+            <div class="iset-card p-4 mb-4 iset-participation-card">
+                <h4 class="fw-bold mb-3">🤝 Participation</h4>
+                
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    {% if alreadyParticipating %}
+                        <div class="alert alert-success mb-3">
+                            <i class="bi bi-check-circle-fill"></i> <strong>Vous êtes inscrit !</strong><br>
+                            <small>À bientôt à l'ISET</small>
+                        </div>
+                    {% else %}
+                        <div class="text-center mb-3">
+                            <div class="display-4 mb-2">🎟️</div>
+                            <a href="{{ path('app_evenement_participer', {id: evenement.id}) }}"
+                               class="btn-iset-primary w-100 d-block text-center py-2 text-decoration-none">
+                                ✅ S'inscrire maintenant
+                            </a>
+                            <small class="text-muted d-block mt-2">Gratuit · Ouvert à tous les étudiants</small>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center">
+                        <i class="bi bi-lock-fill display-6"></i>
+                        <p class="mt-2">Connectez-vous pour participer</p>
+                        <a href="{{ path('app_login') }}" class="btn-iset-outline text-decoration-none d-block">
+                            🔐 Connexion étudiant
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            {# Feedback form #}
+            {% if alreadyParticipating %}
+            <div class="iset-card p-4">
+                <h4 class="fw-bold mb-3">
+                    <i class="bi bi-chat-dots"></i> Donnez votre avis
+                </h4>
+                {{ form_start(feedbackForm) }}
+                    <div class="mb-3">
+                        {{ form_label(feedbackForm.content, "💬 Votre feedback", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(feedbackForm.content, {'attr': {
+                            'class': 'form-control',
+                            'rows': 3,
+                            'placeholder': 'J\'ai aimé / suggestions pour la prochaine fois...'
+                        }})}}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(feedbackForm.rating, "⭐ Note (1-5)", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(feedbackForm.rating, {'attr': {'class': 'form-select'}})}}
+                        <div class="form-text">⭐ 1 = À améliorer · ⭐⭐⭐⭐⭐ = Exceptionnel</div>
+                    </div>
+                    <button type="submit" class="btn-iset-primary w-100 py-2">
+                        ✉️ Envoyer mon feedback
+                    </button>
+                {{ form_end(feedbackForm) }}
+            </div>
+            {% endif %}
+
+            {# Share card #}
+            <div class="mt-3 text-center small text-muted">
+                <i class="bi bi-share"></i> Partagez cet événement avec vos camarades !
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <a href="{{ path('app_evenement_index') }}" class="btn-iset-outline text-decoration-none px-4 py-2">
+            ← Retour à tous les événements
+        </a>
+    </div>
 </div>
 {% endblock %}

@@ -1,43 +1,58 @@
 {% extends 'base.html.twig' %}
-{% block title %}Mes Réclamations{% endblock %}
+
+{% block title %}Mes Réclamations | ISET Clubs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
+{% endblock %}
+
 {% block body %}
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>📋 Mes Réclamations</h1>
-        <a href="{{ path('app_reclamation_new') }}" class="btn btn-primary">+ Nouvelle réclamation</a>
+<div class="container py-5">
+    <div class="iset-card" style="padding: 2rem;">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="display-1">📋</span>
+                <h1 class="display-5 fw-bold mt-2" style="color: var(--iset-dark-blue);">Mes Réclamations</h1>
+            </div>
+            <a href="{{ path('app_reclamation_new') }}" class="btn-iset-primary text-decoration-none px-4 py-2">
+                + Nouvelle réclamation
+            </a>
+        </div>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success border-0 shadow-sm">{{ message }}</div>
+        {% endfor %}
+
+        {% if reclamations is empty %}
+            <div class="text-center py-5">
+                <div class="display-1 mb-3">📭</div>
+                <p class="text-muted">Vous n'avez aucune réclamation pour le moment.</p>
+            </div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover">
+                    <thead style="background: var(--iset-dark-blue);">
+                        <tr><th>Sujet</th><th>Message</th><th>Statut</th><th>Date</th></tr>
+                    </thead>
+                    <tbody>
+                    {% for reclamation in reclamations %}
+                        <tr>
+                            <td>{{ reclamation.subject }}</td>
+                            <td>{{ reclamation.message|slice(0, 80) }}...</td>
+                            <td>
+                                <span class="iset-badge" style="background: {{ reclamation.status == 'resolved' ? 'var(--iset-success)' : (reclamation.status == 'rejected' ? 'var(--iset-red)' : 'var(--iset-warning)') }}; color: white;">
+                                    {{ reclamation.status }}
+                                </span>
+                             </td>
+                            <td>{{ reclamation.createdAt|date('d/m/Y') }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
     </div>
-
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
-
-    {% if reclamations is empty %}
-        <div class="alert alert-info">Vous n'avez aucune réclamation pour le moment.</div>
-    {% else %}
-        <table class="table table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th>Sujet</th>
-                    <th>Message</th>
-                    <th>Statut</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for reclamation in reclamations %}
-                <tr>
-                    <td>{{ reclamation.subject }}</td>
-                    <td>{{ reclamation.message|slice(0, 80) }}...</td>
-                    <td>
-                        <span class="badge bg-{{ reclamation.status == 'resolved' ? 'success' : (reclamation.status == 'rejected' ? 'danger' : 'warning') }}">
-                            {{ reclamation.status }}
-                        </span>
-                    </td>
-                    <td>{{ reclamation.createdAt|date('d/m/Y') }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
 </div>
 {% endblock %}

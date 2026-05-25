@@ -1,36 +1,89 @@
-{% extends 'base.html.twig'%}
-{% block title %} Créer un événement{% endblock %}
-{% block body%}
-<div class="container mt-4" style="max-width: 700px">
-    <h1 class="mb-4">📅 Créer un événement</h1>
-    {{form_start(form,{'attr':{'enctype':'multipart/form-data'}}) }}
-        <div class="mb-3">
-            {{ form_label(form.nomEvenement)}}
-            {{ form_widget(form.nomEvenement)}}
-        </div>
-         <div class="mb-3">
-            {{ form_label(form.dateDebut) }}
-            {{ form_widget(form.dateDebut) }}
-        </div>
-        <div class="mb-3">
-            {{ form_label(form.dateFin) }}
-            {{ form_widget(form.dateFin) }}
-        </div>
-        <div class="mb-3">
-            {{ form_label(form.lieu) }}
-            {{ form_widget(form.lieu) }}
-        </div>
-        <div class="mb-3">
-            {{ form_label(form.description) }}
-            {{ form_widget(form.description) }}
-        </div>
-        <div class="mb-3">
-            {{ form_label(form.imageFile) }}
-            {{ form_widget(form.imageFile) }}
-        </div>
-        <button type="submit" class="btn btn-primary w-100">Créer l'événement</button>
-    {{ form_end(form) }}
+{% extends 'base.html.twig' %}
 
-    <a href="{{ path('app_evenement_index') }}" class="btn btn-secondary mt-3">← Retour</a>
+{% block title %}🎓 Créer un événement – ISET Events{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="iset-form">
+                <div class="text-center mb-4">
+                    <span class="display-1">🎯</span>
+                    <h1 class="display-5 fw-bold mt-2" style="color: var(--iset-dark-blue);">Créer un événement</h1>
+                    <p class="text-muted">Organisez une conférence, un hackathon ou un atelier dans votre ISET</p>
+                    <div class="d-flex justify-content-center gap-2 mt-2">
+                        <span class="iset-badge">🎤 Conférence</span>
+                        <span class="iset-badge iset-badge-tech">💻 Hackathon</span>
+                        <span class="iset-badge">🔬 Atelier</span>
+                        <span class="iset-badge iset-badge-tech">🤝 Networking</span>
+                    </div>
+                </div>
+
+                {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+                    
+                    <div class="mb-4">
+                        {{ form_label(form.nomEvenement, "📌 Nom de l'événement", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(form.nomEvenement, {'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Ex: ISET Code Fest 2026 · Journée Portes Ouvertes · Forum de l\'Emploi'
+                        }})}}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.dateDebut, "📅 Date de début", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                            {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}})}}
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.dateFin, "🏁 Date de fin", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                            {{ form_widget(form.dateFin, {'attr': {'class': 'form-control'}})}}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_label(form.lieu, "📍 Lieu", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(form.lieu, {'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Ex: ISET Charguia - Amphi A · ISET Nabeul - Salle 203 · En ligne (Zoom)'
+                        }})}}
+                        <div class="form-text mt-1">
+                            <i class="bi bi-building"></i> Précisez le bâtiment/salle si nécessaire
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_label(form.description, "📝 Description", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        {{ form_widget(form.description, {'attr': {
+                            'class': 'form-control',
+                            'rows': 5,
+                            'placeholder': '• Programme détaillé\n• Intervenants\n• À prévoir (PC, badge...)\n• Contact'
+                        }})}}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_label(form.imageFile, "🖼️ Affiche / Image", {'label_attr': {'class': 'form-label fw-semibold'}})}}
+                        <div class="border rounded-3 p-3 bg-light">
+                            {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}})}}
+                            <small class="text-muted">JPG, PNG – 1200x600px recommandé</small>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+                        <button type="submit" class="btn-iset-primary px-5 py-2">
+                            ✨ Publier l'événement
+                        </button>
+                        <a href="{{ path('app_evenement_index') }}" class="btn-iset-outline px-4 py-2 text-decoration-none">
+                            ← Annuler
+                        </a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

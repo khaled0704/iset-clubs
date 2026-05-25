@@ -1,11 +1,32 @@
 {% extends 'base.html.twig' %}
-{% block title %}Créer un club{% endblock %}
+
+{% block title %}Créer un club | ISET Clubs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
+{% endblock %}
+
 {% block body %}
-<div class="container mt-4" style="max-width: 700px">
-    <h1 class="mb-4">🏛️ Créer un nouveau club</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="iset-form">
+                <div class="text-center mb-4">
+                    <span class="display-1">🏛️</span>
+                    <h1 class="display-5 fw-bold mt-2" style="color: var(--iset-dark-blue);">Créer un nouveau club</h1>
+                    <p class="text-muted">Donnez vie à votre projet associatif</p>
+                </div>
 
-    {{ include('club/_form.html.twig') }}
+                {{ include('club/_form.html.twig') }}
 
-    <a href="{{ path('app_club_index') }}" class="btn btn-secondary mt-3">← Retour</a>
+                <div class="text-center mt-4">
+                    <a href="{{ path('app_club_index') }}" class="btn-iset-outline text-decoration-none px-4 py-2">
+                        ← Retour
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

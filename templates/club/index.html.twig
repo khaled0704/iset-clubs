@@ -1,47 +1,106 @@
 {% extends 'base.html.twig' %}
-{% block title %}Clubs{% endblock %}
-{% block body %}
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>🏛 Clubs</h1>
-        {% if is_granted('IS_AUTHENTICATED_FULLY') and  not is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('app_club_new') }}" class="btn btn-primary">+ Créer un club</a>
-        {% endif %}
-    </div>
 
+{% block title %}Clubs | ISET Clubs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="iset-hero" style="padding: 2rem 0;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold">🏛 Clubs <span style="color: var(--iset-red);">ISET</span></h1>
+                <p class="lead mt-3 opacity-90">
+                    Rejoignez une communauté dynamique et participez à la vie étudiante
+                </p>
+            </div>
+            <div class="col-lg-4 d-none d-lg-block text-end">
+                {% if is_granted('IS_AUTHENTICATED_FULLY') and not is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_club_new') }}" class="btn-iset-primary text-decoration-none">
+                        🚀 Créer un club
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    
     {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
+        <div class="alert alert-success border-0 shadow-sm" style="border-left: 5px solid var(--iset-success) !important;">
+            <i class="bi bi-check-circle-fill me-2"></i> {{ message }}
+        </div>
     {% endfor %}
 
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="iset-stat">
+                <div class="iset-stat-number">{{ clubs|length }}</div>
+                <div class="text-muted">Clubs actifs</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="iset-stat">
+                <div class="iset-stat-number">🎯</div>
+                <div class="text-muted">Domaines variés</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="iset-stat">
+                <div class="iset-stat-number">🤝</div>
+                <div class="text-muted">Rejoignez-nous</div>
+            </div>
+        </div>
+    </div>
+
     {% if clubs is empty %}
-        <div class="alert alert-info">Aucun club disponible pour le moment.</div>
+        <div class="text-center py-5 my-5">
+            <div class="display-1 mb-3">📭</div>
+            <h3 class="fw-semibold">Aucun club disponible</h3>
+            <p class="text-muted">Soyez le premier à créer un club dans votre ISET</p>
+            {% if is_granted('IS_AUTHENTICATED_FULLY') and not is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_club_new') }}" class="btn-iset-primary mt-2 text-decoration-none">
+                    ➕ Créer un club
+                </a>
+            {% endif %}
+        </div>
     {% else %}
-        <div class="row">
+        <div class="row g-4">
             {% for club in clubs %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
+            <div class="col-md-6 col-lg-4">
+                <div class="iset-card h-100">
                     {% if club.logo %}
                         <img src="/uploads/clubs/{{ club.logo }}" 
-                             class="card-img-top" style="height:180px;object-fit:cover">
+                             class="iset-card-img w-100" style="height: 180px; object-fit: cover;">
                     {% else %}
-                        <div class="bg-secondary text-white text-center py-5">
-                            <span class="fs-1">🏛</span>
+                        <div class="iset-card-img w-100 d-flex align-items-center justify-content-center bg-light" style="height: 180px; background: linear-gradient(135deg, rgba(0,87,163,0.1), rgba(0,61,115,0.05)) !important;">
+                            <span class="display-2 text-muted">🏛</span>
                         </div>
                     {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ club.name }}</h5>
-                        <p class="text-muted small">
-                            🗂 {{ club.domain }}<br>
-                            🗓️ {{ club.createdAt|date('d/m/Y') }}<br>
+                    
+                    <div class="p-4">
+                        <h5 class="fw-bold mb-2" style="color: var(--iset-dark-blue);">{{ club.name }}</h5>
+                        
+                        <div class="small text-muted mb-3">
+                            <div><i class="bi bi-tag"></i> 🗂 {{ club.domain }}</div>
+                            <div><i class="bi bi-calendar"></i> 🗓️ {{ club.createdAt|date('d/m/Y') }}</div>
                             {% if club.wbsite %}
-                                🌐 <a href="{{ club.wbsite }}" target="_blank">{{ club.wbsite }}</a>
+                                <div><i class="bi bi-globe"></i> 🌐 <a href="{{ club.wbsite }}" target="_blank" style="color: var(--iset-blue);">Site web</a></div>
                             {% endif %}
+                        </div>
+                        
+                        <p class="small mb-3" style="color: var(--iset-text);">
+                            {{ club.description|striptags|slice(0, 100) }}...
                         </p>
-                        <p class="card-text">{{ club.description|slice(0, 100) }}...</p>
-                    </div>
-                    <div class="card-footer">
+                        
                         <a href="{{ path('app_club_show', {id: club.id}) }}" 
-                           class="btn btn-primary w-100">Voir détails</a>
+                           class="btn-iset-outline w-100 text-center d-block py-2 text-decoration-none">
+                            Voir détails →
+                        </a>
                     </div>
                 </div>
             </div>

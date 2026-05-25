@@ -1,37 +1,79 @@
 {% extends 'base.html.twig' %}
-{% block title %}Recrutements{% endblock %}
-{% block body %}
-<div class="container mt-4">
-    <h1 class="mb-4">💼 Recrutements</h1>
 
+{% block title %}Recrutements | ISET Events{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="iset-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold">📢 Recrutements <span style="color: var(--iset-red);">ISET</span></h1>
+                <p class="lead mt-3 opacity-90">
+                    Rejoignez les clubs et associations de votre ISET<br>
+                    <strong>Postulez dès maintenant !</strong>
+                </p>
+            </div>
+            <div class="col-lg-4 d-none d-lg-block text-end">
+                <span class="display-1">🎯</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    
     {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
+        <div class="alert alert-success border-0 shadow-sm" style="border-left: 5px solid var(--iset-success) !important;">
+            <i class="bi bi-check-circle-fill me-2"></i> {{ message }}
+        </div>
     {% endfor %}
 
+    
+
     {% if recrutements is empty %}
-        <div class="alert alert-info">Aucun recrutement disponible pour le moment.</div>
+        <div class="text-center py-5 my-5">
+            <div class="display-1 mb-3">📭</div>
+            <h3 class="fw-semibold">Aucun recrutement disponible</h3>
+            <p class="text-muted">Soyez le premier à publier une offre dans votre club</p>
+        </div>
     {% else %}
-        <div class="row">
+        <div class="row g-4">
             {% for recrutement in recrutements %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="bg-dark text-white text-center py-5">
-                        <span class="fs-1">💼</span>
+            <div class="col-md-6 col-lg-4">
+                <div class="iset-card h-100">
+                    <div class="iset-card-img w-100 d-flex align-items-center justify-content-center bg-light" style="height: 160px; background: linear-gradient(135deg, rgba(0,87,163,0.1), rgba(0,61,115,0.05)) !important;">
+                        <i class="ti ti-id-badge" style="font-size: 48px; color: var(--iset-blue);"></i>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">{{ recrutement.title }}</h5>
-                        <p class="text-muted small">
-                            🏢 {{ recrutement.club.name }}<br>
-                            🗓️ {{ recrutement.createdAt|date('d/m/Y') }}<br>
-                            {% if recrutement.deadline %}
-                                ⏳ Deadline: {{ recrutement.deadline|date('d/m/Y') }}
-                            {% endif %}
+                    
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="iset-badge {{ recrutement.status == 'validated' ? 'iset-badge-tech' : '' }}" 
+                                  style="background: {{ recrutement.status == 'validated' ? 'var(--iset-blue)' : 'var(--iset-warning)' }}; color: white;">
+                                {{ recrutement.status }}
+                            </span>
+                            <small class="text-muted">{{ recrutement.createdAt|date('d/m') }}</small>
+                        </div>
+                        
+                        <h5 class="fw-bold mb-2" style="color: var(--iset-dark-blue);">{{ recrutement.title }}</h5>
+                        
+                        <div class="small text-muted mb-3">
+                            <div><i class="bi bi-building"></i> 📍 {{ recrutement.club.name }}</div>
+                            <div><i class="bi bi-calendar"></i> 🗓️ Deadline: {{ recrutement.deadline ? recrutement.deadline|date('d/m/Y') : 'Non spécifiée' }}</div>
+                        </div>
+                        
+                        <p class="small mb-3" style="color: var(--iset-text);">
+                            {{ recrutement.description|striptags|slice(0, 90) }}...
                         </p>
-                        <p class="card-text">{{ recrutement.description|slice(0, 100) }}...</p>
-                    </div>
-                    <div class="card-footer">
+                        
                         <a href="{{ path('app_recrutement_show', {id: recrutement.id}) }}" 
-                           class="btn btn-primary w-100">Voir détails</a>
+                           class="btn-iset-outline w-100 text-center d-block py-2 text-decoration-none">
+                            Voir les détails →
+                        </a>
                     </div>
                 </div>
             </div>

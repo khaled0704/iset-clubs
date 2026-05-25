@@ -1,0 +1,258 @@
+/* ========== ISET THEME ========== */
+/* Colors inspired by Tunisian flag + modern tech education */
+:root {
+    --iset-red: #e21b2c;
+    --iset-white: #ffffff;
+    --iset-blue: #0057a3;
+    --iset-dark-blue: #003d6b;
+    --iset-light-gray: #f5f7fa;
+    --iset-gray: #e9ecef;
+    --iset-text: #2c3e50;
+    --iset-success: #10b981;
+    --iset-warning: #f59e0b;
+}
+
+/* Global styles */
+body {
+    background: linear-gradient(
+        135deg,
+        var(--iset-light-gray) 0%,
+        #ffffff 100%
+    );
+    font-family:
+        "Inter",
+        "Segoe UI",
+        system-ui,
+        -apple-system,
+        sans-serif;
+    color: var(--iset-text);
+}
+
+/* ISET Header Bar */
+.iset-header-bar {
+    background: linear-gradient(
+        90deg,
+        var(--iset-dark-blue) 0%,
+        var(--iset-blue) 100%
+    );
+    color: white;
+    padding: 8px 0;
+    font-size: 0.85rem;
+}
+
+.iset-navbar {
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-bottom: 3px solid var(--iset-red);
+}
+
+/* Hero section for index */
+.iset-hero {
+    background: linear-gradient(
+        135deg,
+        var(--iset-dark-blue) 0%,
+        var(--iset-blue) 100%
+    );
+    color: white;
+    padding: 2.5rem 0;
+    border-radius: 0 0 2rem 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.iset-hero::before {
+    content: "🎓";
+    position: absolute;
+    right: -20px;
+    bottom: -20px;
+    font-size: 180px;
+    opacity: 0.08;
+    pointer-events: none;
+}
+
+.iset-hero h1 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+/* Cards */
+.iset-card {
+    background: white;
+    border: none;
+    border-radius: 1.25rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.iset-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 30px -12px rgba(0, 87, 163, 0.2);
+}
+
+.iset-card-img {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.iset-card:hover .iset-card-img {
+    transform: scale(1.03);
+}
+
+/* Badge styles */
+.iset-badge {
+    background: var(--iset-red);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.iset-badge-tech {
+    background: linear-gradient(
+        135deg,
+        var(--iset-dark-blue),
+        var(--iset-blue)
+    );
+}
+
+/* Buttons */
+.btn-iset-primary {
+    background: linear-gradient(
+        135deg,
+        var(--iset-blue),
+        var(--iset-dark-blue)
+    );
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    border-radius: 2rem;
+    transition: all 0.2s ease;
+}
+
+.btn-iset-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 87, 163, 0.3);
+    color: white;
+}
+
+.btn-iset-outline {
+    background: transparent;
+    border: 2px solid var(--iset-blue);
+    color: var(--iset-blue);
+    font-weight: 600;
+    border-radius: 2rem;
+    transition: all 0.2s ease;
+}
+
+.btn-iset-outline:hover {
+    background: var(--iset-blue);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-iset-red {
+    background: linear-gradient(135deg, var(--iset-red), #c41728);
+    border: none;
+    color: white;
+    font-weight: 600;
+    border-radius: 2rem;
+}
+
+/* Form styles */
+.iset-form {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.1);
+}
+
+.iset-form input,
+.iset-form textarea,
+.iset-form select {
+    border: 1.5px solid var(--iset-gray);
+    border-radius: 0.75rem;
+    padding: 0.7rem 1rem;
+    transition: all 0.2s;
+}
+
+.iset-form input:focus,
+.iset-form textarea:focus,
+.iset-form select:focus {
+    border-color: var(--iset-blue);
+    box-shadow: 0 0 0 3px rgba(0, 87, 163, 0.1);
+    outline: none;
+}
+
+/* Stats / counter style */
+.iset-stat {
+    background: var(--iset-light-gray);
+    border-radius: 1rem;
+    padding: 1rem;
+    text-align: center;
+}
+
+.iset-stat-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--iset-blue);
+}
+
+/* Footer */
+.iset-footer {
+    background: var(--iset-dark-blue);
+    color: white;
+    margin-top: 4rem;
+    padding: 2rem 0;
+}
+
+/* Event detail page */
+.iset-event-header {
+    background: linear-gradient(
+        105deg,
+        var(--iset-dark-blue) 0%,
+        var(--iset-blue) 100%
+    );
+    color: white;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.iset-participation-card {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+    border-left: 5px solid var(--iset-red);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .iset-hero h1 {
+        font-size: 1.8rem;
+    }
+    .iset-card-img {
+        height: 160px;
+    }
+}
+
+/* Animation for alerts */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert {
+    animation: slideIn 0.3s ease;
+    border-radius: 1rem;
+    border-left: 5px solid;
+}
