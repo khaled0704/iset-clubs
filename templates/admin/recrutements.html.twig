@@ -12,7 +12,7 @@
     <div class="iset-card" style="padding: 2rem;">
         
         <div class="text-center mb-4">
-            <span class="display-1">🏛</span>
+            <span class="display-1">📋</span>
             <h1 class="display-5 fw-bold mt-2" style="color: var(--iset-dark-blue);">Gestion des Recrutements</h1>
         </div>
 
@@ -20,59 +20,82 @@
             <div class="alert alert-success border-0 shadow-sm">{{ message }}</div>
         {% endfor %}
 
-        {# Pending #}
+        {# Pending recruitments #}
         <h3 class="text-warning mb-3">⏳ En attente de validation</h3>
         <div class="table-responsive mb-5">
-            <table class="table table-dark table-hover">
-                <thead style="background: var(--iset-warning); color: #1a1a2e;">
-                    <tr><th>Titre</th><th>Club</th><th>Créé le</th><th>Deadline</th><th>Actions</th></tr>
+           <table class="table table-hover">
+    <thead style="background: var(--iset-dark-blue); color: white;">
+                        <th>Titre</th>
+                        <th>Club</th>
+                        <th>Créé le</th>
+                        <th>Deadline</th>
+                        <th>Actions</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% set hasPending = false %}
-                {% for recrutement in recrutements %}
-                    {% if recrutement.status == 'pending' %}
-                        {% set hasPending = true %}
+                    {% set hasPending = false %}
+                    {% for recrutement in recrutements %}
+                        {% if recrutement.status == 'pending' %}
+                            {% set hasPending = true %}
+                            <tr>
+                                <td>{{ recrutement.title }}</td>
+                                <td>{{ recrutement.club.name }}</td>
+                                <td>{{ recrutement.createdAt|date('d/m/Y') }}</td>
+                                <td>{{ recrutement.deadline ? recrutement.deadline|date('d/m/Y') : '-' }}</td>
+                                <td>
+                                    <a href="{{ path('app_admin_validate_recrutement', {id: recrutement.id}) }}" class="btn-iset-primary btn-sm" style="padding: 0.25rem 0.75rem;">✅ Valider</a>
+                                    <a href="{{ path('app_admin_reject_recrutement', {id: recrutement.id}) }}" class="btn-iset-danger btn-sm" style="padding: 0.25rem 0.75rem;">❌ Refuser</a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% if not hasPending %}
                         <tr>
-                            <td>{{ recrutement.title }}</td>
-                            <td>{{ recrutement.club.name }}</td>
-                            <td>{{ recrutement.createdAt|date('d/m/Y') }}</td>
-                            <td>{{ recrutement.deadline ? recrutement.deadline|date('d/m/Y') : '-' }}</td>
-                            <td>
-                                <a href="{{ path('app_admin_validate_recrutement', {id: recrutement.id}) }}" class="btn-iset-primary btn-sm">✅ Valider</a>
-                                <a href="{{ path('app_admin_reject_recrutement', {id: recrutement.id}) }}" class="btn-iset-danger btn-sm">❌ Refuser</a>
-                             </td>
+                            <td colspan="5" class="text-center text-muted">Aucun recrutement en attente</td>
                         </tr>
                     {% endif %}
-                {% endfor %}
-                {% if not hasPending %}51row<td colspan="5" class="text-center text-muted">Aucun recrutement en attente</td>{% endif %}{% endfor %}
                 </tbody>
             </table>
         </div>
 
-        {# Validated #}
+        {# Validated recruitments #}
         <h3 class="text-success mb-3">✅ Recrutements validés</h3>
         <div class="table-responsive">
-            <table class="table table-dark table-hover">
-                <thead style="background: var(--iset-success);">
-                    <tr><th>Titre</th><th>Club</th><th>Créé le</th><th>Deadline</th><th>Candidatures</th></tr>
+           <table class="table table-hover">
+    <thead style="background: var(--iset-dark-blue); color: white;">
+                    <tr>
+                        <th>Titre</th>
+                        <th>Club</th>
+                        <th>Créé le</th>
+                        <th>Deadline</th>
+                        <th>Candidatures</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% set hasValidated = false %}
-                {% for recrutement in recrutements %}
-                    {% if recrutement.status == 'validated' %}
-                        {% set hasValidated = true %}
+                    {% set hasValidated = false %}
+                    {% for recrutement in recrutements %}
+                        {% if recrutement.status == 'validated' %}
+                            {% set hasValidated = true %}
+                            <tr>
+                                <td>{{ recrutement.title }}</td>
+                                <td>{{ recrutement.club.name }}</td>
+                                <td>{{ recrutement.createdAt|date('d/m/Y') }}</td>
+                                <td>{{ recrutement.deadline ? recrutement.deadline|date('d/m/Y') : '-' }}</td>
+                                <td>{{ recrutement.candidatures|length }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% if not hasValidated %}
                         <tr>
-                            <td>{{ recrutement.title }}</td>
-                            <td>{{ recrutement.club.name }}</td>
-                            <td>{{ recrutement.createdAt|date('d/m/Y') }}</td>
-                            <td>{{ recrutement.deadline ? recrutement.deadline|date('d/m/Y') : '-' }}</td>
-                            <td>{{ recrutement.candidatures|length }}</td>
+                            <td colspan="5" class="text-center text-muted">Aucun recrutement validé</td>
                         </tr>
                     {% endif %}
-                {% endfor %}
-                {% if not hasValidated %}51row<td colspan="5" class="text-center text-muted">Aucun recrutement validé</td>{% endif %}{% endfor %}
                 </tbody>
             </table>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ path('app_admin') }}" class="btn-iset-outline text-decoration-none px-4 py-2">← Retour</a>
         </div>
     </div>
 </div>

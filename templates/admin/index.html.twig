@@ -1,131 +1,112 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Admin Dashboard | ISET Clubs{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
-    <style>
-        .admin-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .admin-stat-card {
-            background: linear-gradient(135deg, var(--iset-dark-blue), var(--iset-blue));
-            border-radius: 1rem;
-            padding: 1.5rem;
-            color: white;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-        .admin-stat-card:hover {
-            transform: translateY(-5px);
-        }
-        .admin-stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-        }
-        .admin-stat-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        .admin-stat-badge {
-            background: var(--iset-red);
-            border-radius: 2rem;
-            padding: 0.2rem 0.7rem;
-            font-size: 0.7rem;
-            margin-left: 0.5rem;
-        }
-    </style>
 {% endblock %}
 
 {% block body %}
 <div class="container py-5">
-    
+
     <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold" style="color: var(--iset-dark-blue);">👨‍💼 Admin Dashboard</h1>
+        <span class="display-1">👨‍💼</span>
+        <h1 class="display-4 fw-bold mt-2" style="color: var(--iset-dark-blue);">Admin Dashboard</h1>
         <p class="text-muted">Vue d'ensemble — ISET Clubs</p>
     </div>
 
-    <div class="admin-stats">
-        <div class="admin-stat-card">
-            <div class="admin-stat-number">{{ totalUsers }}</div>
-            <div class="admin-stat-label">Utilisateurs</div>
-            {% if totalPendingUsers > 0 %}
-                <span class="admin-stat-badge">{{ totalPendingUsers }} en attente</span>
-            {% endif %}
+    {# Stats #}
+    <div class="row g-3 mb-4">
+        <div class="col-md-2">
+            <div class="iset-card p-3 text-center">
+                <div class="fw-bold" style="font-size:2rem; color: var(--iset-dark-blue);">{{ totalUsers }}</div>
+                <div class="small text-muted">Utilisateurs</div>
+                {% if totalPendingUsers > 0 %}
+                    <span class="iset-badge mt-1 d-inline-block" style="background: var(--iset-red); color:white;">{{ totalPendingUsers }} en attente</span>
+                {% endif %}
+            </div>
         </div>
-        <div class="admin-stat-card">
-            <div class="admin-stat-number">{{ totalEvents }}</div>
-            <div class="admin-stat-label">Événements</div>
-            {% if totalPendingEvents > 0 %}
-                <span class="admin-stat-badge">{{ totalPendingEvents }} en attente</span>
-            {% endif %}
+        <div class="col-md-2">
+            <div class="iset-card p-3 text-center">
+                <div class="fw-bold" style="font-size:2rem; color: var(--iset-dark-blue);">{{ totalClubs }}</div>
+                <div class="small text-muted">Clubs</div>
+                {% if totalPendingClubs > 0 %}
+                    <span class="iset-badge mt-1 d-inline-block" style="background: var(--iset-red); color:white;">{{ totalPendingClubs }} en attente</span>
+                {% endif %}
+            </div>
         </div>
-        <div class="admin-stat-card">
-            <div class="admin-stat-number">{{ totalClubs }}</div>
-            <div class="admin-stat-label">Clubs</div>
-            {% if totalPendingClubs > 0 %}
-                <span class="admin-stat-badge">{{ totalPendingClubs }} en attente</span>
-            {% endif %}
+        <div class="col-md-2">
+            <div class="iset-card p-3 text-center">
+                <div class="fw-bold" style="font-size:2rem; color: var(--iset-dark-blue);">{{ totalEvents }}</div>
+                <div class="small text-muted">Événements</div>
+                {% if totalPendingEvents > 0 %}
+                    <span class="iset-badge mt-1 d-inline-block" style="background: var(--iset-red); color:white;">{{ totalPendingEvents }} en attente</span>
+                {% endif %}
+            </div>
         </div>
-        <div class="admin-stat-card">
-            <div class="admin-stat-number">{{ totalReclamations }}</div>
-            <div class="admin-stat-label">Réclamations</div>
-            {% if totalPendingReclamations > 0 %}
-                <span class="admin-stat-badge">{{ totalPendingReclamations }} en attente</span>
-            {% endif %}
+        
+        <div class="col-md-2">
+            <div class="iset-card p-3 text-center">
+                <div class="fw-bold" style="font-size:2rem; color: var(--iset-dark-blue);">{{ totalReclamations }}</div>
+                <div class="small text-muted">Réclamations</div>
+                {% if totalPendingReclamations > 0 %}
+                    <span class="iset-badge mt-1 d-inline-block" style="background: var(--iset-red); color:white;">{{ totalPendingReclamations }} en attente</span>
+                {% endif %}
+            </div>
         </div>
+         
     </div>
 
-    <div class="row g-4">
-        <div class="col-md-6">
-            <div class="iset-card p-4">
+    {# Recent tables #}
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="iset-card p-4 h-100">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3 class="fw-bold" style="color: var(--iset-dark-blue);"><i class="bi bi-people"></i> Derniers utilisateurs</h3>
-                    <a href="{{ path('app_admin_users') }}" style="color: var(--iset-blue);">Voir tout →</a>
+                    <h5 class="fw-bold mb-0" style="color: var(--iset-dark-blue);">👥 Derniers utilisateurs</h5>
+                    <a href="{{ path('app_admin_users') }}" style="color: var(--iset-blue); font-size:13px;">Voir tout →</a>
                 </div>
                 {% for user in recentUsers %}
-                <div class="d-flex align-items-center gap-3 mb-3 p-2" style="border-bottom: 1px solid var(--iset-border);">
-                    <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                        <span class="text-white">{{ user.firstname|first }}{{ user.lastname|first }}</span>
+                <div class="d-flex align-items-center gap-3 py-2" style="border-bottom: 1px solid var(--iset-border);">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                         style="width:36px; height:36px; background: linear-gradient(135deg, var(--iset-blue), var(--iset-dark-blue));">
+                        <span class="text-white small fw-bold">{{ user.firstname|first|upper }}{{ user.lastname|first|upper }}</span>
                     </div>
                     <div>
-                        <div class="fw-semibold">{{ user.firstname }} {{ user.lastname }}</div>
-                        <div class="small text-muted">{{ user.email }}</div>
+                        <div class="fw-semibold small">{{ user.firstname }} {{ user.lastname }}</div>
+                        <div class="text-muted" style="font-size:11px;">{{ user.email }}</div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="iset-card p-4 mb-4">
+        <div class="col-md-4">
+            <div class="iset-card p-4 h-100">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3 class="fw-bold" style="color: var(--iset-dark-blue);"><i class="bi bi-calendar"></i> Événements récents</h3>
-                    <a href="{{ path('app_admin_events') }}" style="color: var(--iset-blue);">Voir tout →</a>
+                    <h5 class="fw-bold mb-0" style="color: var(--iset-dark-blue);">📅 Événements récents</h5>
+                    <a href="{{ path('app_admin_events') }}" style="color: var(--iset-blue); font-size:13px;">Voir tout →</a>
                 </div>
                 {% for event in recentEvents %}
-                <div class="d-flex justify-content-between align-items-center mb-2 p-2" style="border-bottom: 1px solid var(--iset-border);">
-                    <span>{{ event.nomEvenement }}</span>
-                    <span class="iset-badge" style="background: {{ event.status == 'validated' ? 'var(--iset-success)' : (event.status == 'rejected' ? 'var(--iset-red)' : 'var(--iset-warning)') }}; color: white;">
+                <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom: 1px solid var(--iset-border);">
+                    <span class="small">{{ event.nomEvenement }}</span>
+                    <span class="iset-badge" style="background: {{ event.status == 'validated' ? 'var(--iset-success)' : (event.status == 'rejected' ? 'var(--iset-red)' : 'var(--iset-warning)') }}; color: white; font-size:11px;">
                         {{ event.status }}
                     </span>
                 </div>
                 {% endfor %}
             </div>
+        </div>
 
-            <div class="iset-card p-4">
+        <div class="col-md-4">
+            <div class="iset-card p-4 h-100">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3 class="fw-bold" style="color: var(--iset-dark-blue);"><i class="bi bi-briefcase"></i> Recrutements récents</h3>
-                    <a href="{{ path('app_admin_recrutements') }}" style="color: var(--iset-blue);">Voir tout →</a>
+                    <h5 class="fw-bold mb-0" style="color: var(--iset-dark-blue);">💼 Recrutements récents</h5>
+                    <a href="{{ path('app_admin_recrutements') }}" style="color: var(--iset-blue); font-size:13px;">Voir tout →</a>
                 </div>
                 {% for recrutement in recentRecrutements %}
-                <div class="d-flex justify-content-between align-items-center mb-2 p-2" style="border-bottom: 1px solid var(--iset-border);">
-                    <span>{{ recrutement.title }}</span>
-                    <span class="iset-badge" style="background: {{ recrutement.status == 'validated' ? 'var(--iset-success)' : 'var(--iset-warning)' }}; color: white;">
+                <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom: 1px solid var(--iset-border);">
+                    <span class="small">{{ recrutement.title }}</span>
+                    <span class="iset-badge" style="background: {{ recrutement.status == 'validated' ? 'var(--iset-success)' : 'var(--iset-warning)' }}; color: white; font-size:11px;">
                         {{ recrutement.status }}
                     </span>
                 </div>
@@ -134,35 +115,60 @@
         </div>
     </div>
 
-    <div class="row g-4 mt-2">
-        <div class="col-md-3">
-            <a href="{{ path('app_admin_users') }}" class="admin-stat-card text-decoration-none d-block" style="background: linear-gradient(135deg, #1e3a5f, #0c2340);">
-                <i class="bi bi-people fs-1"></i>
-                <div class="admin-stat-number">👥</div>
-                <div class="admin-stat-label">Gérer les utilisateurs</div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="{{ path('app_admin_clubs') }}" class="admin-stat-card text-decoration-none d-block" style="background: linear-gradient(135deg, #0a2e1a, #064e3b);">
-                <i class="bi bi-building fs-1"></i>
-                <div class="admin-stat-number">🏛</div>
-                <div class="admin-stat-label">Gérer les clubs</div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="{{ path('app_admin_events') }}" class="admin-stat-card text-decoration-none d-block" style="background: linear-gradient(135deg, #3a1f00, #78350f);">
-                <i class="bi bi-calendar-event fs-1"></i>
-                <div class="admin-stat-number">📅</div>
-                <div class="admin-stat-label">Gérer les événements</div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="{{ path('app_admin_recrutements') }}" class="admin-stat-card text-decoration-none d-block" style="background: linear-gradient(135deg, #4c1d95, #5b21b6);">
-                <i class="bi bi-file-person fs-1"></i>
-                <div class="admin-stat-number">📋</div>
-                <div class="admin-stat-label">Gérer les recrutements</div>
-            </a>
+    {# Quick navigation #}
+    <div class="iset-card p-4">
+        <h5 class="fw-bold mb-4" style="color: var(--iset-dark-blue);">⚡ Navigation rapide</h5>
+        
+        <div class="row g-3">
+        <div class="col-md-3 col-6">
+                <a href="{{ path('app_admin_club_members') }}" class="iset-card p-3 d-flex align-items-center gap-3 text-decoration-none h-100" style="border: 1px solid var(--iset-border);">
+                    <span style="font-size:1.75rem;">🤝</span>
+                    <div>
+                        <div class="fw-semibold small" style="color: var(--iset-dark-blue);">Adhésions</div>
+                        {% if totalPendingClubMembers > 0 %}<div class="text-danger" style="font-size:11px;">{{ totalPendingClubMembers }} en attente</div>{% endif %}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="{{ path('app_admin_users') }}" class="iset-card p-3 d-flex align-items-center gap-3 text-decoration-none h-100" style="border: 1px solid var(--iset-border);">
+                    <span style="font-size:1.75rem;">👥</span>
+                    <div>
+                        <div class="fw-semibold small" style="color: var(--iset-dark-blue);">Utilisateurs</div>
+                        {% if totalPendingUsers > 0 %}<div class="text-danger" style="font-size:11px;">{{ totalPendingUsers }} en attente</div>{% endif %}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="{{ path('app_admin_events') }}" class="iset-card p-3 d-flex align-items-center gap-3 text-decoration-none h-100" style="border: 1px solid var(--iset-border);">
+                    <span style="font-size:1.75rem;">📅</span>
+                    <div>
+                        <div class="fw-semibold small" style="color: var(--iset-dark-blue);">Événements</div>
+                        {% if totalPendingEvents > 0 %}<div class="text-danger" style="font-size:11px;">{{ totalPendingEvents }} en attente</div>{% endif %}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="{{ path('app_admin_clubs') }}" class="iset-card p-3 d-flex align-items-center gap-3 text-decoration-none h-100" style="border: 1px solid var(--iset-border);">
+                    <span style="font-size:1.75rem;">🏛️</span>
+                    <div>
+                        <div class="fw-semibold small" style="color: var(--iset-dark-blue);">Clubs</div>
+                        {% if totalPendingClubs > 0 %}<div class="text-danger" style="font-size:11px;">{{ totalPendingClubs }} en attente</div>{% endif %}
+                    </div>
+                </a>
+            </div>
+            
+            
+            <div class="col-md-3 col-6">
+                <a href="{{ path('app_admin_reclamations') }}" class="iset-card p-3 d-flex align-items-center gap-3 text-decoration-none h-100" style="border: 1px solid var(--iset-border);">
+                    <span style="font-size:1.75rem;">📋</span>
+                    <div>
+                        <div class="fw-semibold small" style="color: var(--iset-dark-blue);">Réclamations</div>
+                        {% if totalPendingReclamations > 0 %}<div class="text-danger" style="font-size:11px;">{{ totalPendingReclamations }} en attente</div>{% endif %}
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
+
 </div>
 {% endblock %}

@@ -26,30 +26,42 @@
         {# Pending #}
         <h3 class="text-warning mb-3">⏳ En attente de validation</h3>
         <div class="table-responsive mb-5">
-            <table class="table table-dark table-hover">
-                <thead style="background: var(--iset-warning); color: #1a1a2e;">
-                    <tr><th>N°</th><th>Étudiant</th><th>Recrutement</th><th>Club</th><th>Date</th><th>CV</th><th>Actions</th></tr>
+            <table class="table table-hover">
+    <thead style="background: var(--iset-dark-blue); color: white;">
+                    <tr>
+                        <th>N°</th>
+                        <th>Étudiant</th>
+                        <th>Recrutement</th>
+                        <th>Club</th>
+                        <th>Date</th>
+                        <th>CV</th>
+                        <th>Actions</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% set hasPending = false %}
-                {% for candidature in candidatures %}
-                    {% if candidature.status == 'pending' %}
-                        {% set hasPending = true %}
+                    {% set hasPending = false %}
+                    {% for candidature in candidatures %}
+                        {% if candidature.status == 'pending' %}
+                            {% set hasPending = true %}
+                            <tr>
+                                <td><small>{{ candidature.no }}</small></td>
+                                <td>{{ candidature.user.firstname }} {{ candidature.user.lastname }}<br><small class="text-muted">{{ candidature.user.email }}</small></td>
+                                <td>{{ candidature.recrutement ? candidature.recrutement.title : '-' }}</td>
+                                <td>{{ candidature.recrutement ? candidature.recrutement.club.name : '-' }}</td>
+                                <td>{{ candidature.submittedAt|date('d/m/Y H:i') }}</td>
+                                <td>{% if candidature.cvFilename %}<a href="{{ asset('uploads/cvs/' ~ candidature.cvFilename) }}" target="_blank" style="color: var(--iset-blue-light);">📄 Voir CV</a>{% else %}-{% endif %}</td>
+                                <td>
+                                    <a href="{{ path('app_admin_approve_candidature', {id: candidature.id}) }}" class="btn-iset-primary btn-sm" style="padding: 0.25rem 0.75rem;">✅ Approuver</a>
+                                    <a href="{{ path('app_admin_reject_candidature', {id: candidature.id}) }}" class="btn-iset-danger btn-sm" style="padding: 0.25rem 0.75rem;">❌ Refuser</a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% if not hasPending %}
                         <tr>
-                            <td><small>{{ candidature.no }}</small></td>
-                            <td>{{ candidature.user.firstname }} {{ candidature.user.lastname }}<br><small class="text-muted">{{ candidature.user.email }}</small></td>
-                            <td>{{ candidature.recrutement ? candidature.recrutement.title : '-' }}</td>
-                            <td>{{ candidature.recrutement ? candidature.recrutement.club.name : '-' }}</td>
-                            <td>{{ candidature.submittedAt|date('d/m/Y H:i') }}</td>
-                            <td>{% if candidature.cvFilename %}<a href="{{ asset('uploads/cvs/' ~ candidature.cvFilename) }}" target="_blank" style="color: var(--iset-blue-light);">📄 Voir CV</a>{% else %}-{% endif %}</td>
-                            <td>
-                                <a href="{{ path('app_admin_approve_candidature', {id: candidature.id}) }}" class="btn-iset-primary btn-sm" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">✅ Approuver</a>
-                                <a href="{{ path('app_admin_reject_candidature', {id: candidature.id}) }}" class="btn-iset-danger btn-sm" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">❌ Refuser</a>
-                            </td>
+                            <td colspan="7" class="text-center text-muted">Aucune candidature en attente</td>
                         </tr>
                     {% endif %}
-                {% endfor %}
-                {% if not hasPending %}<tr><td colspan="7" class="text-center text-muted">Aucune candidature en attente</td></tr>{% endif %}
                 </tbody>
             </table>
         </div>
@@ -57,25 +69,35 @@
         {# Approved #}
         <h3 class="text-success mb-3">✅ Candidatures approuvées</h3>
         <div class="table-responsive mb-5">
-            <table class="table table-dark table-hover">
-                <thead style="background: var(--iset-success);">
-                    <tr><th>N°</th><th>Étudiant</th><th>Recrutement</th><th>Club</th><th>Date</th></tr>
+           <table class="table table-hover">
+    <thead style="background: var(--iset-dark-blue); color: white;">
+                    <tr>
+                        <th>N°</th>
+                        <th>Étudiant</th>
+                        <th>Recrutement</th>
+                        <th>Club</th>
+                        <th>Date</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% set hasApproved = false %}
-                {% for candidature in candidatures %}
-                    {% if candidature.status == 'approved' %}
-                        {% set hasApproved = true %}
+                    {% set hasApproved = false %}
+                    {% for candidature in candidatures %}
+                        {% if candidature.status == 'approved' %}
+                            {% set hasApproved = true %}
+                            <tr>
+                                <td><small>{{ candidature.no }}</small></td>
+                                <td>{{ candidature.user.firstname }} {{ candidature.user.lastname }}</td>
+                                <td>{{ candidature.recrutement ? candidature.recrutement.title : '-' }}</td>
+                                <td>{{ candidature.recrutement ? candidature.recrutement.club.name : '-' }}</td>
+                                <td>{{ candidature.submittedAt|date('d/m/Y H:i') }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% if not hasApproved %}
                         <tr>
-                            <td><small>{{ candidature.no }}</small></td>
-                            <td>{{ candidature.user.firstname }} {{ candidature.user.lastname }}</td>
-                            <td>{{ candidature.recrutement ? candidature.recrutement.title : '-' }}</td>
-                            <td>{{ candidature.recrutement ? candidature.recrutement.club.name : '-' }}</td>
-                            <td>{{ candidature.submittedAt|date('d/m/Y H:i') }}</td>
+                            <td colspan="5" class="text-center text-muted">Aucune candidature approuvée</td>
                         </tr>
                     {% endif %}
-                {% endfor %}
-                {% if not hasApproved %}<tr><td colspan="5" class="text-center text-muted">Aucune candidature approuvée</td></tr>{% endif %}
                 </tbody>
             </table>
         </div>
@@ -83,25 +105,35 @@
         {# Rejected #}
         <h3 class="text-danger mb-3">❌ Candidatures refusées</h3>
         <div class="table-responsive">
-            <table class="table table-dark table-hover">
-                <thead style="background: var(--iset-red);">
-                    <tr><th>N°</th><th>Étudiant</th><th>Recrutement</th><th>Club</th><th>Date</th></tr>
+            <table class="table table-hover">
+    <thead style="background: var(--iset-dark-blue); color: white;">
+                    <tr>
+                        <th>N°</th>
+                        <th>Étudiant</th>
+                        <th>Recrutement</th>
+                        <th>Club</th>
+                        <th>Date</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% set hasRejected = false %}
-                {% for candidature in candidatures %}
-                    {% if candidature.status == 'rejected' %}
-                        {% set hasRejected = true %}
+                    {% set hasRejected = false %}
+                    {% for candidature in candidatures %}
+                        {% if candidature.status == 'rejected' %}
+                            {% set hasRejected = true %}
+                            <tr>
+                                <td><small>{{ candidature.no }}</small></td>
+                                <td>{{ candidature.user.firstname }} {{ candidature.user.lastname }}</td>
+                                <td>{{ candidature.recrutement ? candidature.recrutement.title : '-' }}</td>
+                                <td>{{ candidature.recrutement ? candidature.recrutement.club.name : '-' }}</td>
+                                <td>{{ candidature.submittedAt|date('d/m/Y H:i') }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% if not hasRejected %}
                         <tr>
-                            <td><small>{{ candidature.no }}</small></td>
-                            <td>{{ candidature.user.firstname }} {{ candidature.user.lastname }}</td>
-                            <td>{{ candidature.recrutement ? candidature.recrutement.title : '-' }}</td>
-                            <td>{{ candidature.recrutement ? candidature.recrutement.club.name : '-' }}</td>
-                            <td>{{ candidature.submittedAt|date('d/m/Y H:i') }}</td>
+                            <td colspan="5" class="text-center text-muted">Aucune candidature refusée</td>
                         </tr>
                     {% endif %}
-                {% endfor %}
-                {% if not hasRejected %}<tr><td colspan="5" class="text-center text-muted">Aucune candidature refusée</td></tr>{% endif %}
                 </tbody>
             </table>
         </div>

@@ -23,28 +23,44 @@
         {# Pending clubs #}
         <h3 class="text-warning mb-3">⏳ En attente de validation</h3>
         <div class="table-responsive mb-5">
-            <table class="table table-dark table-hover">
-                <thead style="background: var(--iset-warning); color: #1a1a2e;">
-                    <tr><th>Nom</th><th>Domaine</th><th>Créé le</th><th>Président</th><th>Actions</th></tr>
+           <table class="table table-hover">
+    <thead style="background: var(--iset-dark-blue); color: white;">
+                    <tr>
+                        <th>Nom</th>
+                        <th>Domaine</th>
+                        <th>Créé le</th>
+                        <th>Président</th>
+                        <th>Actions</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% set hasPending = false %}
-                {% for club in clubs %}
-                    {% if club.status == 'pending' %}
-                        {% set hasPending = true %}
+                    {% set hasPending = false %}
+                    {% for club in clubs %}
+                        {% if club.status == 'pending' %}
+                            {% set hasPending = true %}
+                            <tr>
+                                <td>{{ club.name }}</td>
+                                <td>{{ club.domain }}</td>
+                                <td>{{ club.createdAt|date('d/m/Y') }}</td>
+                                <td>
+                                    {% for member in club.clubMembers %}
+                                        {% if member.role == 'President' %}
+                                            {{ member.user.firstname }} {{ member.user.lastname }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <a href="{{ path('app_admin_validate_club', {id: club.id}) }}" class="btn-iset-primary btn-sm" style="padding: 0.25rem 0.75rem;">✅ Approuver</a>
+                                    <a href="{{ path('app_admin_reject_club', {id: club.id}) }}" class="btn-iset-danger btn-sm" style="padding: 0.25rem 0.75rem;" onclick="return confirm('Supprimer ce club ?')">❌ Refuser</a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% if not hasPending %}
                         <tr>
-                            <td>{{ club.name }}</td>
-                            <td>{{ club.domain }}</td>
-                            <td>{{ club.createdAt|date('d/m/Y') }}</td>
-                            <td>{% for member in club.clubMembers %}{% if member.role == 'President' %}{{ member.user.firstname }} {{ member.user.lastname }}{% endif %}{% endfor %}</td>
-                            <td>
-                                <a href="{{ path('app_admin_validate_club', {id: club.id}) }}" class="btn-iset-primary btn-sm">✅ Approuver</a>
-                                <a href="{{ path('app_admin_reject_club', {id: club.id}) }}" class="btn-iset-danger btn-sm" onclick="return confirm('Supprimer ce club ?')">❌ Refuser</a>
-                            </td>
+                            <td colspan="5" class="text-center text-muted">Aucun club en attente</td>
                         </tr>
                     {% endif %}
-                {% endfor %}
-                {% if not hasPending %}<tr><td colspan="5" class="text-center text-muted">Aucun club en attente</td>{% endif %}{% endfor %}
                 </tbody>
             </table>
         </div>
@@ -52,27 +68,43 @@
         {# Validated clubs #}
         <h3 class="text-success mb-3">✅ Clubs validés</h3>
         <div class="table-responsive">
-            <table class="table table-dark table-hover">
-                <thead style="background: var(--iset-success);">
-                    <tr><th>Nom</th><th>Domaine</th><th>Créé le</th><th>Membres</th><th>Actions</th></tr>
+            <table class="table table-hover">
+    <thead style="background: var(--iset-dark-blue); color: white;">);">
+                    <tr>
+                        <th>Nom</th>
+                        <th>Domaine</th>
+                        <th>Créé le</th>
+                        <th>Membres</th>
+                        <th>Actions</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% set hasValidated = false %}
-                {% for club in clubs %}
-                    {% if club.status == 'validated' %}
-                        {% set hasValidated = true %}
+                    {% set hasValidated = false %}
+                    {% for club in clubs %}
+                        {% if club.status == 'validated' %}
+                            {% set hasValidated = true %}
+                            <tr>
+                                <td>{{ club.name }}</td>
+                                <td>{{ club.domain }}</td>
+                                <td>{{ club.createdAt|date('d/m/Y') }}</td>
+                                <td>{{ club.clubMembers|length }}</td>
+                                <td>
+                                    <a href="{{ path('app_admin_delete_club', {id: club.id}) }}" class="btn-iset-danger btn-sm" style="padding: 0.25rem 0.75rem;" onclick="return confirm('Supprimer ce club et toutes ses données ?')">🗑 Supprimer</a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% if not hasValidated %}
                         <tr>
-                            <td>{{ club.name }}</td>
-                            <td>{{ club.domain }}</td>
-                            <td>{{ club.createdAt|date('d/m/Y') }}</td>
-                            <td>{{ club.clubMembers|length }}</td>
-                            <td><a href="{{ path('app_admin_delete_club', {id: club.id}) }}" class="btn-iset-danger btn-sm" onclick="return confirm('Supprimer ce club et toutes ses données ?')">🗑 Supprimer</a></td>
+                            <td colspan="5" class="text-center text-muted">Aucun club validé</td>
                         </tr>
                     {% endif %}
-                {% endfor %}
-                {% if not hasValidated %}<tr><td colspan="5" class="text-center text-muted">Aucun club validé</td>{% endif %}{% endfor %}
                 </tbody>
             </table>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ path('app_admin') }}" class="btn-iset-outline text-decoration-none px-4 py-2">← Retour</a>
         </div>
     </div>
 </div>

@@ -1,15 +1,38 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Mon Club - {{ club.name }} | ISET Clubs{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/iset-theme.css') }}">
+    <style>
+        .club-stat { border-radius: 12px; padding: 1.5rem; text-align: center; }
+        .club-stat-number { 
+            font-size: 2.5rem !important; 
+            font-weight: 700 !important; 
+            color: #ffffff !important; 
+            display: block !important;
+            line-height: 1 !important;
+            margin-bottom: 6px !important;
+        }
+        .club-stat-label { 
+            font-size: 0.9rem !important; 
+            color: rgba(255,255,255,0.9) !important; 
+            display: block !important;
+            margin: 4px 0 8px !important; 
+        }
+        .club-stat a {
+            color: rgba(255,255,255,0.8) !important;
+            font-size: 0.85rem !important;
+        }
+        .club-stat a:hover {
+            color: #fff !important;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
 <div class="container py-5">
-    
+
     {% for message in app.flashes('success') %}
         <div class="alert alert-success border-0 shadow-sm">{{ message }}</div>
     {% endfor %}
@@ -17,12 +40,14 @@
         <div class="alert alert-warning border-0 shadow-sm">{{ message }}</div>
     {% endfor %}
 
-    <div class="row g-4">
+    {# Header #}
+    <div class="row g-4 mb-4">
         <div class="col-md-3 text-center">
             <div class="iset-card p-4">
                 {% if club.logo %}
                     <img src="{{ asset('uploads/clubs/' ~ club.logo) }}"
-                         class="rounded-circle mb-3" width="120" height="120" style="object-fit:cover; border: 3px solid var(--iset-blue);">
+                         class="rounded-circle mb-3" width="120" height="120"
+                         style="object-fit:cover; border: 3px solid var(--iset-blue);">
                 {% else %}
                     <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
                          style="width:120px;height:120px; background: linear-gradient(135deg, var(--iset-blue), var(--iset-blue-dark));">
@@ -40,43 +65,48 @@
                 <p class="text-muted mt-2">{{ club.description }}</p>
 
                 {% if isManager %}
-                <div class="row g-3 mt-3">
-                    <div class="col-md-4">
-                        <div class="admin-stat-card" style="background: linear-gradient(135deg, #1e3a5f, #0c2340);">
-                            <div class="admin-stat-number">{{ members|length }}</div>
-                            <div class="admin-stat-label">Membres</div>
-                            <a href="#members" class="text-white text-decoration-none small">Gérer →</a>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="admin-stat-card" style="background: linear-gradient(135deg, #0a2e1a, #064e3b);">
-                            <div class="admin-stat-number">{{ recrutements|length }}</div>
-                            <div class="admin-stat-label">Recrutements</div>
-                            <a href="{{ path('app_recrutement_create') }}" class="text-white text-decoration-none small">Ajouter →</a>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="admin-stat-card" style="background: linear-gradient(135deg, #3a1f00, #78350f);">
-                            <div class="admin-stat-number">📅</div>
-                            <div class="admin-stat-label">Événements</div>
-                            <a href="{{ path('app_evenement_create') }}" class="text-white text-decoration-none small">Ajouter →</a>
-                        </div>
-                    </div>
-                </div>
+               <div class="row g-3 mt-3">
+    <div class="col-md-4">
+        <div class="iset-card p-3 text-center">
+            <div style="font-size:2rem; font-weight:700; color: var(--iset-dark-blue);">{{ members|length }}</div>
+            <div class="text-muted small">Membres</div>
+            <a href="#members" class="small text-decoration-none" style="color: var(--iset-blue);">Gérer →</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="iset-card p-3 text-center">
+            <div style="font-size:2rem; font-weight:700; color: var(--iset-dark-blue);">{{ recrutements|length }}</div>
+            <div class="text-muted small">Recrutements</div>
+            <a href="{{ path('app_recrutement_create') }}" class="small text-decoration-none" style="color: var(--iset-blue);">Ajouter →</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="iset-card p-3 text-center">
+            <div style="font-size:2rem; font-weight:700; color: var(--iset-dark-blue);">{{ evenements|length }}</div>
+            <div class="text-muted small">Événements</div>
+            <a href="{{ path('app_evenement_create') }}" class="small text-decoration-none" style="color: var(--iset-blue);">Ajouter →</a>
+        </div>
+    </div>
+</div>
                 {% endif %}
             </div>
         </div>
     </div>
 
-    {# Members section #}
+    {# Members #}
     <div class="iset-card p-4 mt-4" id="members">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="fw-bold" style="color: var(--iset-dark-blue);"><i class="bi bi-people"></i> Membres du club</h3>
+            <h3 class="fw-bold" style="color: var(--iset-dark-blue);">👥 Membres du club</h3>
         </div>
         <div class="table-responsive">
-            <table class="table table-dark table-hover">
-                <thead style="background: var(--iset-dark-blue);">
-                    <tr><th>Nom et Prénom</th><th>Email</th><th>Rôle</th>{% if isManager %}<th>Statut</th><th>Actions</th>{% endif %}</tr>
+            <table class="table table-hover">
+                <thead style="background: var(--iset-dark-blue); color: white;">
+                    <tr>
+                        <th>Nom et Prénom</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        {% if isManager %}<th>Statut</th><th>Actions</th>{% endif %}
+                    </tr>
                 </thead>
                 <tbody>
                     {% for member in members %}
@@ -85,13 +115,17 @@
                         <td>{{ member.user.email }}</td>
                         <td>{{ member.role }}</td>
                         {% if isManager %}
-                        <td><span class="iset-badge" style="background: {{ member.status == 'approved' ? 'var(--iset-success)' : 'var(--iset-warning)' }}; color: white;">{{ member.status }}</span></td>
+                        <td>
+                            <span class="iset-badge" style="background: {{ member.status == 'approved' ? 'var(--iset-success)' : 'var(--iset-warning)' }}; color: white;">
+                                {{ member.status }}
+                            </span>
+                        </td>
                         <td>
                             {% if member.status == 'pending' %}
-                                <a href="{{ path('app_club_approve_member', {id: member.id}) }}" class="btn-iset-primary btn-sm">Approuver</a>
+                                <a href="{{ path('app_club_approve_member', {id: member.id}) }}" class="btn-iset-primary btn-sm me-1">Approuver</a>
                                 <a href="{{ path('app_club_reject_member', {id: member.id}) }}" class="btn-iset-danger btn-sm">Refuser</a>
                             {% endif %}
-                         </td>
+                        </td>
                         {% endif %}
                     </tr>
                     {% endfor %}
@@ -100,19 +134,19 @@
         </div>
     </div>
 
-    {# Recrutements section #}
+    {# Recrutements #}
     {% if isManager %}
     <div class="iset-card p-4 mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="fw-bold" style="color: var(--iset-dark-blue);"><i class="bi bi-briefcase"></i> Recrutements</h3>
+            <h3 class="fw-bold" style="color: var(--iset-dark-blue);">💼 Recrutements</h3>
             <a href="{{ path('app_recrutement_create') }}" class="btn-iset-primary text-decoration-none">+ Nouveau</a>
         </div>
         {% if recrutements is empty %}
             <p class="text-muted text-center py-3">Aucun recrutement pour le moment.</p>
         {% else %}
             <div class="table-responsive">
-                <table class="table table-dark table-hover">
-                    <thead style="background: var(--iset-dark-blue);">
+                <table class="table table-hover">
+                    <thead style="background: var(--iset-dark-blue); color: white;">
                         <tr><th>Titre</th><th>Deadline</th><th>Statut</th><th>Actions</th></tr>
                     </thead>
                     <tbody>
@@ -120,14 +154,18 @@
                         <tr>
                             <td>{{ recrutement.title }}</td>
                             <td>{{ recrutement.deadline ? recrutement.deadline|date('d/m/Y') : 'N/A' }}</td>
-                            <td><span class="iset-badge" style="background: {{ recrutement.status == 'validated' ? 'var(--iset-success)' : 'var(--iset-warning)' }}; color: white;">{{ recrutement.status }}</span></td>
                             <td>
-                                <a href="{{ path('app_recrutement_show', {id: recrutement.id}) }}" class="btn-iset-primary btn-sm">Voir</a>
-                                {% if isManager %}
-                                    <a href="{{ path('app_recrutement_edit', {id: recrutement.id}) }}" class="btn-iset-secondary btn-sm">Modifier</a>
-                                    <a href="{{ path('app_recrutement_delete', {id: recrutement.id}) }}" class="btn-iset-danger btn-sm" onclick="return confirm('Supprimer ce recrutement ?')">Supprimer</a>
-                                {% endif %}
-                              </tr>
+                                <span class="iset-badge" style="background: {{ recrutement.status == 'validated' ? 'var(--iset-success)' : 'var(--iset-warning)' }}; color: white;">
+                                    {{ recrutement.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ path('app_recrutement_show', {id: recrutement.id}) }}" class="btn-iset-primary btn-sm me-1">Voir</a>
+                                <a href="{{ path('app_recrutement_edit', {id: recrutement.id}) }}" class="btn-iset-secondary btn-sm me-1">Modifier</a>
+                                <a href="{{ path('app_recrutement_delete', {id: recrutement.id}) }}" class="btn-iset-danger btn-sm"
+                                   onclick="return confirm('Supprimer ce recrutement ?')">Supprimer</a>
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -136,10 +174,10 @@
     </div>
     {% endif %}
 
-    {# Événements section #}
+    {# Événements #}
     <div class="iset-card p-4 mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="fw-bold" style="color: var(--iset-dark-blue);"><i class="bi bi-calendar-event"></i> Événements</h3>
+            <h3 class="fw-bold" style="color: var(--iset-dark-blue);">📅 Événements</h3>
             {% if isManager %}
                 <a href="{{ path('app_evenement_create') }}" class="btn-iset-primary text-decoration-none">+ Nouveau</a>
             {% endif %}
@@ -148,8 +186,8 @@
             <p class="text-muted text-center py-3">Aucun événement pour le moment.</p>
         {% else %}
             <div class="table-responsive">
-                <table class="table table-dark table-hover">
-                    <thead style="background: var(--iset-dark-blue);">
+                <table class="table table-hover">
+                    <thead style="background: var(--iset-dark-blue); color: white;">
                         <tr><th>Titre</th><th>Date début</th><th>Statut</th><th>Actions</th></tr>
                     </thead>
                     <tbody>
@@ -157,8 +195,14 @@
                         <tr>
                             <td>{{ evenement.nomEvenement }}</td>
                             <td>{{ evenement.dateDebut|date('d/m/Y') }}</td>
-                            <td><span class="iset-badge" style="background: {{ evenement.status == 'validated' ? 'var(--iset-success)' : 'var(--iset-warning)' }}; color: white;">{{ evenement.status }}</span></td>
-                            <td><a href="{{ path('app_evenement_show', {id: evenement.id}) }}" class="btn-iset-primary btn-sm">Voir</a></td>
+                            <td>
+                                <span class="iset-badge" style="background: {{ evenement.status == 'validated' ? 'var(--iset-success)' : 'var(--iset-warning)' }}; color: white;">
+                                    {{ evenement.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ path('app_evenement_show', {id: evenement.id}) }}" class="btn-iset-primary btn-sm">Voir</a>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -167,10 +211,11 @@
         {% endif %}
     </div>
 
+    {# Club management #}
     {% if isManager %}
     <div class="iset-card p-4 mt-4">
-        <h3 class="fw-bold mb-3" style="color: var(--iset-dark-blue);"><i class="bi bi-gear"></i> Gestion du club</h3>
-        <div class="d-flex gap-2">
+        <h3 class="fw-bold mb-3" style="color: var(--iset-dark-blue);">⚙️ Gestion du club</h3>
+        <div class="d-flex gap-2 flex-wrap">
             <a href="{{ path('app_club_edit', {id: club.id}) }}" class="btn-iset-secondary text-decoration-none px-4 py-2">
                 ✏️ Modifier les infos du club
             </a>
